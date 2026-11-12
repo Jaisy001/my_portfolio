@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>[Your Name] — Python Developer & Velocity Video Editor</title>
+  <meta name="description" content="Jaisy — available for code builds and high-energy edits. Explore Python projects, interactive demos and creative work." />
+  <meta name="theme-color" content="#070910" />
+  <title>Jaisy — Python Developer & Video Editor</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -160,37 +162,187 @@
       background: #A855F7;
     }
   </style>
+
+  <style id="premium-upgrade">
+    :root {
+      color-scheme: dark;
+      --ink: #070910;
+      --panel: rgba(15, 20, 34, .76);
+      --line: rgba(148, 163, 184, .15);
+      --muted: #9aa8bd;
+      --accent: #8b7cff;
+      --accent-2: #45d8e8;
+    }
+    html { scroll-padding-top: 6rem; }
+    body {
+      background:
+        radial-gradient(ellipse at 12% 8%, rgba(91, 76, 196, .16), transparent 34rem),
+        radial-gradient(ellipse at 90% 36%, rgba(18, 155, 184, .10), transparent 32rem),
+        #070910;
+      letter-spacing: -.012em;
+    }
+    body::before {
+      content: "";
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      opacity: .20;
+      background-image: linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+      background-size: 54px 54px;
+      mask-image: linear-gradient(to bottom, black, transparent 85%);
+    }
+    #bgCanvas { opacity: .55; }
+    .mesh-blob { opacity: .13; filter: blur(125px); }
+    nav.glass-panel {
+      background: rgba(7, 9, 16, .78);
+      border-bottom-color: rgba(148, 163, 184, .12);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+    }
+    .bento-card, .glass-panel {
+      border-color: var(--line);
+      box-shadow: 0 24px 80px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.035);
+    }
+    .bento-card {
+      background: linear-gradient(145deg, rgba(18,24,41,.88), rgba(10,14,25,.94));
+      border-radius: 1.6rem;
+    }
+    .bento-card:hover {
+      border-color: rgba(139,124,255,.45);
+      box-shadow: 0 28px 85px rgba(0,0,0,.34), 0 0 34px rgba(69,216,232,.07);
+    }
+    .neon-gradient-text {
+      background-image: linear-gradient(110deg, #a99cff 0%, #58dbe9 48%, #ff8d9a 100%);
+      animation-duration: 11s;
+    }
+    section[id], footer[id] { scroll-margin-top: 6.5rem; }
+    a, button, input, textarea { -webkit-tap-highlight-color: transparent; }
+    a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible {
+      outline: 2px solid #67e8f9;
+      outline-offset: 4px;
+    }
+    .nav-link {
+      position: relative; color: #aebbd0; transition: color .2s ease;
+    }
+    .nav-link::after {
+      content: ""; position: absolute; left: 0; right: 100%; bottom: -.55rem;
+      height: 2px; border-radius: 2px;
+      background: linear-gradient(90deg, #9b8cff, #45d8e8);
+      transition: right .22s ease;
+    }
+    .nav-link:hover { color: white; }
+    .nav-link:hover::after { right: 0; }
+    .upgrade-kicker {
+      color: #a9a0ff; letter-spacing: .16em; text-transform: uppercase;
+      font: 600 .68rem/1.4 "JetBrains Mono", monospace;
+    }
+    .section-heading { letter-spacing: -.045em; }
+    .about-stat {
+      border: 1px solid rgba(148,163,184,.14);
+      background: rgba(255,255,255,.025);
+      border-radius: 1rem; padding: 1rem;
+    }
+    .process-line {
+      height: 1px; flex: 1;
+      background: linear-gradient(90deg, rgba(139,124,255,.65), rgba(69,216,232,.12));
+    }
+    .reveal { opacity: 0; transform: translateY(18px); transition: opacity .65s ease, transform .65s cubic-bezier(.2,.7,.2,1); }
+    .reveal.is-visible { opacity: 1; transform: translateY(0); }
+    #scrollProgress {
+      position: fixed; top: 0; left: 0; width: 0; height: 2px; z-index: 100;
+      background: linear-gradient(90deg, #9b8cff, #45d8e8, #ff8d9a);
+      box-shadow: 0 0 12px rgba(69,216,232,.45);
+    }
+    .mobile-menu {
+      background: rgba(8,11,20,.97);
+      border: 1px solid rgba(148,163,184,.16);
+      box-shadow: 0 24px 60px rgba(0,0,0,.45);
+      backdrop-filter: blur(22px);
+    }
+    .field-shell {
+      background: rgba(5,8,15,.72);
+      border: 1px solid rgba(148,163,184,.2);
+      transition: border-color .2s ease, box-shadow .2s ease;
+    }
+    .field-shell:focus { border-color: rgba(69,216,232,.7); box-shadow: 0 0 0 3px rgba(69,216,232,.09); outline: none; }
+    .primary-action {
+      background: linear-gradient(110deg, #7666e9, #2baec4);
+      box-shadow: 0 12px 34px rgba(73,116,225,.22);
+      transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
+    }
+    .primary-action:hover { transform: translateY(-2px); box-shadow: 0 16px 40px rgba(73,116,225,.3); filter: brightness(1.08); }
+    @media (max-width: 767px) {
+      #top { padding-top: 3.4rem; }
+      .bento-card { border-radius: 1.3rem; }
+      .mobile-menu a { display: block; padding: .85rem 1rem; border-radius: .8rem; }
+      .mobile-menu a:hover { background: rgba(255,255,255,.06); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+      .reveal { opacity: 1; transform: none; }
+    }
+
+    /* Consistent neon glow for every interactive button and CTA link. */
+    button,
+    a.primary-action,
+    a.inline-flex[class*="rounded-"],
+    a[class*="bg-gradient-to-r"][class*="rounded-"] {
+      box-shadow: 0 0 12px rgba(139,124,255,.20), 0 0 24px rgba(69,216,232,.10);
+      transition: box-shadow .22s ease, transform .22s ease, filter .22s ease;
+    }
+    button:hover,
+    a.primary-action:hover,
+    a.inline-flex[class*="rounded-"]:hover,
+    a[class*="bg-gradient-to-r"][class*="rounded-"]:hover {
+      box-shadow: 0 0 16px rgba(139,124,255,.42), 0 0 34px rgba(69,216,232,.24);
+      filter: brightness(1.08);
+    }
+    button:focus-visible,
+    a.primary-action:focus-visible,
+    a.inline-flex[class*="rounded-"]:focus-visible,
+    a[class*="bg-gradient-to-r"][class*="rounded-"]:focus-visible {
+      outline: 2px solid #45d8e8;
+      outline-offset: 3px;
+      box-shadow: 0 0 0 5px rgba(69,216,232,.14), 0 0 24px rgba(139,124,255,.35);
+    }
+  </style>
+
 </head>
 <body class="antialiased selection:bg-neonPurple selection:text-white">
+  <div id="scrollProgress" aria-hidden="true"></div>
 
   <canvas id="bgCanvas"></canvas>
   <div class="mesh-blob w-[460px] h-[460px] bg-neonPurple -top-28 -left-24"></div>
   <div class="mesh-blob w-[420px] h-[420px] bg-cyberCyan top-1/3 -right-28" style="animation-delay: 2.5s;"></div>
   <div class="mesh-blob w-[380px] h-[380px] bg-vibrantCoral bottom-0 left-1/4" style="animation-delay: 5s;"></div>
 
-  <nav class="sticky top-0 z-40 glass-panel border-b border-white/10">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-      <a href="#top" class="flex items-center gap-3 group">
-        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-neonPurple via-cyberCyan to-vibrantCoral p-[1.5px] shadow-lg shadow-neonPurple/30 group-hover:rotate-6 transition-transform">
-          <div class="w-full h-full bg-void rounded-[10px] flex items-center justify-center font-mono font-bold text-sm text-white">
-            &lt;/&gt;
-          </div>
+  <nav class="sticky top-0 z-40 glass-panel border-b border-white/10" aria-label="Main navigation">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[72px] flex items-center justify-between gap-4">
+      <a href="#top" class="flex items-center gap-3 group" aria-label="Jaisy home">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-neonPurple via-cyberCyan to-vibrantCoral p-[1.5px] shadow-lg shadow-neonPurple/20 group-hover:rotate-6 transition-transform">
+          <div class="w-full h-full bg-void rounded-[10px] flex items-center justify-center font-mono font-bold text-sm text-white">&lt;/&gt;</div>
         </div>
-        <span class="font-display font-bold text-lg tracking-tight text-white" data-bind="brandName">[Your Name]</span>
+        <span class="font-display font-bold text-lg tracking-tight text-white" data-bind="brandName">Jaisy</span>
+        <span class="hidden sm:inline text-[10px] font-mono tracking-[.18em] text-slate-500 border-l border-white/15 pl-3">PORTFOLIO / 2025</span>
       </a>
 
-      <div class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
-        <a href="#projects" class="hover:text-cyberCyan transition-colors">Projects &amp; Edits</a>
-        <a href="#skills" class="hover:text-neonPurple transition-colors">Stack &amp; Proficiency</a>
-        <a href="#contact" class="hover:text-vibrantCoral transition-colors">Contact</a>
+      <div class="hidden md:flex items-center gap-7 text-sm font-medium">
+        <a href="#about" class="nav-link">About</a>
+        <a href="#projects" class="nav-link">Projects</a>
+        <a href="#skills" class="nav-link">Expertise</a>
+        <a href="#contact" class="nav-link">Contact</a>
       </div>
 
-      <div class="flex items-center gap-3">
-        <button id="openDrawerBtn" class="relative inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold text-white bg-surfaceLight hover:bg-white/10 border border-white/15 shadow-lg shadow-neonPurple/10 transition-all cursor-pointer">
-          <span class="w-2 h-2 rounded-full bg-cyberCyan animate-ping"></span>
-          <span>Customize Portfolio</span>
+      <div class="flex items-center gap-2 md:hidden">
+        <button id="mobileMenuBtn" type="button" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open navigation menu" class="w-10 h-10 rounded-xl border border-white/15 bg-white/[.05] text-white flex items-center justify-center">
+          <svg id="menuIcon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
         </button>
       </div>
+    </div>
+    <div id="mobileMenu" class="mobile-menu hidden md:hidden mx-4 mb-3 p-2 rounded-2xl">
+      <a href="#about" class="text-sm text-slate-200">About</a>
+      <a href="#projects" class="text-sm text-slate-200">Projects &amp; Edits</a>
+      <a href="#skills" class="text-sm text-slate-200">Expertise</a>
+      <a href="#contact" class="text-sm text-slate-200">Contact</a>
     </div>
   </nav>
 
@@ -204,19 +356,24 @@
           </div>
 
           <h1 class="font-display font-bold text-4xl sm:text-6xl lg:text-[64px] leading-[1.06] tracking-tight text-white">
-            Hi, I'm <span class="neon-gradient-text" data-bind="heroName">[Your Name]</span>
+            Hi, I'm <span class="neon-gradient-text" data-bind="heroName">Jaisy</span>
           </h1>
 
           <div class="font-display font-bold text-2xl sm:text-3xl lg:text-4xl text-slate-200 min-h-[44px] flex items-center">
             <span class="text-slate-400 mr-2.5">&gt;</span>
-            <span id="typingRole" class="text-transparent bg-clip-text bg-gradient-to-r from-cyberCyan via-neonPurple to-vibrantCoral">Python Developer</span>
+            <span id="typingRole" class="text-transparent bg-clip-text bg-gradient-to-r from-cyberCyan via-neonPurple to-vibrantCoral">AVAILABLE FOR CODE BUILDS &amp; HIGH-ENERGY EDITS</span>
             <span class="typing-cursor"></span>
+            
           </div>
 
           <p class="text-slate-300 text-base sm:text-lg max-w-2xl leading-relaxed" data-bind="bioText">
-            I engineer logical Python applications from scratch—from lossless compression engines to algorithmic toolkits—and craft razor-sharp velocity edits with custom speed graphs, beat-sync impact, and dynamic zoom curves.
+            I engineer logical Python applications from scratch—from lossless compression engines to algorithmic toolkits—and craft razor-sharp edits with custom speed graphs, beat-sync impact, and dynamic zoom curves.
           </p>
 
+          <div id="heroQuickFacts" class="flex flex-wrap gap-x-5 gap-y-2 pt-1 text-xs sm:text-sm text-slate-400">
+            <span class="inline-flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cyberCyan"></span>Python &amp; problem solving</span>
+            <span class="inline-flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-vibrantCoral"></span>Motion &amp; visual storytelling</span>
+          </div>
           <div class="flex flex-wrap items-center gap-4 pt-3">
             <a href="#projects" class="group relative inline-flex items-center gap-2.5 px-7 py-3.5 rounded-2xl font-bold text-sm sm:text-base text-white bg-gradient-to-r from-neonPurple via-cyberCyan to-vibrantCoral bg-[length:200%_auto] hover:bg-right transition-all duration-500 shadow-[0_0_25px_rgba(168,85,247,0.45)]">
               <span>Explore Projects &amp; Edits</span>
@@ -250,7 +407,7 @@
               <div class="flex items-center justify-between">
                 <div>
                   <p class="text-xs font-mono text-cyberCyan uppercase tracking-wider">Primary Identity</p>
-                  <h2 class="font-display font-bold text-xl text-white mt-0.5" data-bind="cardName">[Your Name]</h2>
+                  <h2 class="font-display font-bold text-xl text-white mt-0.5" data-bind="cardName">Jaisy</h2>
                 </div>
                 <div class="px-3 py-1.5 rounded-xl bg-neonPurple/15 border border-neonPurple/40 font-mono text-xs font-semibold text-neonPurple">
                   60 FPS + O(n)
@@ -297,7 +454,54 @@
       </div>
     </section>
 
-    <section id="projects" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <section id="about" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+      <div class="grid lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+        <div class="lg:col-span-5 reveal">
+          <p class="upgrade-kicker mb-4">01 / A little introduction</p>
+          <h2 class="font-display font-bold section-heading text-3xl sm:text-5xl text-white leading-tight">
+            Curious by nature.<br><span class="neon-gradient-text">Builder by practice.</span>
+          </h2>
+        </div>
+        <div class="lg:col-span-7 space-y-6 reveal">
+          <p class="text-slate-300 text-base sm:text-lg leading-relaxed">
+            I’m Jaisy — a Python developer and video editor interested in turning ideas into useful, well-crafted experiences. On the development side, I enjoy building logic-driven tools, exploring algorithms and making small applications from the ground up.
+          </p>
+          <p class="text-slate-400 text-sm sm:text-base leading-relaxed">
+            On the creative side, I work with timing, motion, speed graphs and visual rhythm to make edits feel intentional. I like combining technical thinking with creative execution, and I’m always looking for a better way to build, test and refine my work.
+          </p>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
+            <div class="about-stat"><div class="font-display text-xl font-bold text-white">Python</div><div class="text-xs text-slate-500 mt-1">Development focus</div></div>
+            <div class="about-stat"><div class="font-display text-xl font-bold text-white">Editing</div><div class="text-xs text-slate-500 mt-1">Creative practice</div></div>
+            <div class="about-stat col-span-2 sm:col-span-1"><div class="font-display text-xl font-bold text-white">Learning</div><div class="text-xs text-slate-500 mt-1">Always iterating</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="approach" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-14 sm:pb-20">
+      <div class="flex items-center gap-4 mb-7 reveal">
+        <p class="upgrade-kicker whitespace-nowrap">02 / How I work</p><div class="process-line"></div>
+      </div>
+      <div class="grid md:grid-cols-3 gap-4">
+        <article class="bento-card p-6 sm:p-7 reveal">
+          <span class="font-mono text-xs text-cyberCyan">01 — UNDERSTAND</span>
+          <h3 class="font-display text-xl font-bold text-white mt-4 mb-2">Start with the problem</h3>
+          <p class="text-sm leading-relaxed text-slate-400">Clarify the goal, break the task into smaller parts and decide what a useful result should look like.</p>
+        </article>
+        <article class="bento-card p-6 sm:p-7 reveal">
+          <span class="font-mono text-xs text-neonPurple">02 — BUILD</span>
+          <h3 class="font-display text-xl font-bold text-white mt-4 mb-2">Make it work</h3>
+          <p class="text-sm leading-relaxed text-slate-400">Build the core logic or creative structure, then test the details that make the result reliable.</p>
+        </article>
+        <article class="bento-card p-6 sm:p-7 reveal">
+          <span class="font-mono text-xs text-vibrantCoral">03 — REFINE</span>
+          <h3 class="font-display text-xl font-bold text-white mt-4 mb-2">Polish the experience</h3>
+          <p class="text-sm leading-relaxed text-slate-400">Review what can be clearer, smoother or more useful, and improve it without adding complexity for its own sake.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="projects" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
       <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
         <div>
           <div class="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-neonPurple/15 border border-neonPurple/35 text-neonPurple font-mono text-xs font-semibold mb-3">
@@ -424,7 +628,7 @@
           <div>
             <div class="flex items-center justify-between gap-3 mb-5">
               <span class="px-3 py-1 rounded-full text-xs font-mono font-semibold bg-vibrantCoral/20 text-vibrantCoral border border-vibrantCoral/40">
-                VELOCITY // BEAT-SYNC
+                // BEAT-SYNC
               </span>
               <span class="font-mono text-xs text-slate-500">04</span>
             </div>
@@ -432,7 +636,7 @@
             <div class="grid sm:grid-cols-12 gap-5 items-center mb-5">
               <div class="sm:col-span-7">
                 <h3 class="font-display font-bold text-2xl sm:text-3xl text-white mb-2.5 group-hover:text-vibrantCoral transition-colors">
-                  Velocity &amp; Beat-Sync Edits
+                  &amp; Beat-Sync Edits
                 </h3>
                 <p class="text-slate-300 text-sm leading-relaxed">
                   High-impact rhythmic edits locked to snare transients and 808 drops. Combines 400% speed-up spikes with 35% optical-flow slow-mo dips and crisp flash frames.
@@ -533,7 +737,7 @@
       </div>
     </section>
 
-    <section id="skills" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <section id="skills" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
       <div class="mb-10">
         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-cyberCyan/15 border border-cyberCyan/35 text-cyberCyan font-mono text-xs font-semibold mb-3">
           <span>ARSENAL &amp; PROFICIENCY</span>
@@ -613,7 +817,7 @@
           <div class="space-y-4">
             <div class="bg-void/70 border border-white/10 rounded-2xl p-4">
               <div class="flex justify-between items-center text-sm font-semibold mb-2">
-                <span class="text-white flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-vibrantCoral"></span>CapCut Pro (Velocity &amp; Speed Graphs)</span>
+                <span class="text-white flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-vibrantCoral"></span>CapCut Pro (&amp; Speed Graphs)</span>
                 <span class="font-mono text-xs text-vibrantCoral">96%</span>
               </div>
               <div class="w-full h-2 bg-white/10 rounded-full overflow-hidden">
@@ -652,46 +856,68 @@
       </div>
     </section>
 
-    <footer id="contact" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-20">
-      <div class="bento-card rounded-3xl p-8 sm:p-14 text-center relative overflow-hidden">
-        <div class="absolute inset-0 bg-gradient-to-r from-neonPurple/10 via-cyberCyan/10 to-vibrantCoral/10 pointer-events-none"></div>
-        <div class="relative z-10 max-w-2xl mx-auto space-y-6">
-          <span class="inline-block px-3.5 py-1 rounded-full bg-white/10 border border-white/15 font-mono text-xs text-cyberCyan">
-            READY TO BUILD OR EDIT?
-          </span>
-
-          <h2 class="font-display font-bold text-3xl sm:text-5xl text-white tracking-tight">
-            Let's turn raw ideas into <span class="neon-gradient-text">high-impact work.</span>
-          </h2>
-
-          <p class="text-slate-300 text-sm sm:text-base">
-            Explore my repositories on GitHub, check out my latest edits on socials, or copy my email below.
-          </p>
-
-          <div class="flex flex-wrap items-center justify-center gap-4 pt-2">
-            <a id="githubAnchor" href="https://github.com/yourusername" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-2xl font-bold text-sm text-white bg-white/10 hover:bg-white/15 border border-white/15 transition-all">
-              <span>GitHub</span>
-              <span class="font-mono text-xs text-cyberCyan" data-bind="githubDisplay">@yourusername</span>
-              <span>↗</span>
-            </a>
-
-            <a id="socialAnchor" href="https://tiktok.com/@yourusername" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-2xl font-bold text-sm text-white bg-gradient-to-r from-vibrantCoral to-neonPurple shadow-lg shadow-vibrantCoral/20 transition-all">
-              <span>Socials</span>
-              <span class="font-mono text-xs text-white/90" data-bind="socialDisplay">@yourusername</span>
-              <span>↗</span>
-            </a>
-
-            <button id="copyEmailBtn" class="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-2xl font-bold text-sm text-void bg-cyberCyan hover:bg-cyberCyan/90 shadow-lg shadow-cyberCyan/20 transition-all cursor-pointer">
-              <span>📋 Copy Email:</span>
-              <span class="font-mono" data-bind="emailDisplay">you@example.com</span>
-            </button>
+    <footer id="contact" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16">
+      <div class="grid lg:grid-cols-12 gap-6">
+        <div class="lg:col-span-5 bento-card p-7 sm:p-10 relative overflow-hidden reveal">
+          <div class="absolute -right-20 -top-20 w-64 h-64 rounded-full bg-neonPurple/10 blur-3xl pointer-events-none"></div>
+          <div class="relative z-10 space-y-5">
+            <p class="upgrade-kicker">03 / Get in touch</p>
+            <h2 class="font-display font-bold text-3xl sm:text-5xl text-white tracking-tight leading-tight">
+              Have an idea?<br><span class="neon-gradient-text">Let’s make it real.</span>
+            </h2>
+            <p class="text-slate-400 text-sm sm:text-base leading-relaxed">For Python projects, creative edits or a collaboration, send a message or find me on the platforms below.</p>
+            <div class="flex flex-wrap gap-3 pt-2">
+              <a id="githubAnchor" href="https://github.com/jaisy001" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold text-white bg-white/[.06] hover:bg-white/10 border border-white/10 transition-all">
+                <span>GitHub</span><span class="font-mono text-xs text-cyberCyan" data-bind="githubDisplay">@jaisy001</span><span>↗</span>
+              </a>
+              <a id="socialAnchor" href="https://www.tiktok.com/@only1jaisy" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold text-white bg-white/[.06] hover:bg-white/10 border border-white/10 transition-all">
+                <span>Socials</span><span class="font-mono text-xs text-vibrantCoral" data-bind="socialDisplay">@only1jaisy</span><span>↗</span>
+              </a>
+            </div>
+            <div class="pt-3 border-t border-white/10">
+              <p class="text-xs text-slate-500 mb-1">EMAIL</p>
+              <div class="flex flex-wrap items-center gap-3">
+                <span class="text-sm text-slate-200 break-all" data-bind="emailDisplay">seunobafemi4real@gmail.com</span>
+                <button id="copyEmailBtn" type="button" class="text-xs font-semibold text-cyberCyan hover:text-white transition-colors">Copy email ↗</button>
+              </div>
+            </div>
           </div>
+        </div>
+
+        <div class="lg:col-span-7 bento-card p-7 sm:p-10 reveal">
+          <div class="flex items-center justify-between gap-4 mb-6">
+            <div><p class="upgrade-kicker mb-2">Send a message</p><h3 class="font-display text-2xl sm:text-3xl font-bold text-white">Let’s talk about your project.</h3></div>
+            <div class="hidden sm:flex w-12 h-12 rounded-2xl bg-cyberCyan/10 border border-cyberCyan/20 items-center justify-center text-cyberCyan text-xl">✉</div>
+          </div>
+          <form id="contactForm" class="space-y-4">
+            <div class="grid sm:grid-cols-2 gap-4">
+              <label class="block text-xs font-semibold text-slate-300">Your name
+                <input id="contactName" name="name" required maxlength="80" autocomplete="name" class="field-shell block w-full mt-2 rounded-xl px-4 py-3 text-sm text-white placeholder:text-slate-600" placeholder="Name" />
+              </label>
+              <label class="block text-xs font-semibold text-slate-300">Your email
+                <input id="contactEmail" name="email" type="email" required maxlength="120" autocomplete="email" class="field-shell block w-full mt-2 rounded-xl px-4 py-3 text-sm text-white placeholder:text-slate-600" placeholder="you@example.com" />
+              </label>
+            </div>
+            <label class="block text-xs font-semibold text-slate-300">What would you like to discuss?
+              <select id="contactTopic" name="topic" class="field-shell block w-full mt-2 rounded-xl px-4 py-3 text-sm text-white">
+                <option>Python development</option><option>Video editing</option><option>Collaboration</option><option>Something else</option>
+              </select>
+            </label>
+            <label class="block text-xs font-semibold text-slate-300">Message
+              <textarea id="contactMessage" name="message" required minlength="10" maxlength="2000" rows="5" class="field-shell block w-full mt-2 rounded-xl px-4 py-3 text-sm text-white placeholder:text-slate-600 resize-y" placeholder="Tell me a little about what you have in mind..."></textarea>
+            </label>
+            <div class="flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between pt-1">
+              <p class="text-xs text-slate-500">This opens your email app with the message ready to send.</p>
+              <button type="submit" class="primary-action inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-bold text-white">Prepare message <span>↗</span></button>
+            </div>
+            <p id="contactFormStatus" class="text-xs text-cyberCyan" role="status" aria-live="polite"></p>
+          </form>
         </div>
       </div>
 
       <div class="mt-8 flex flex-col sm:flex-row items-center justify-between text-xs font-mono text-slate-500 gap-2">
-        <p>© <span id="yearNow"></span> <span data-bind="footerName">[Your Name]</span> — Engineered with precision &amp; motion.</p>
-        <p>DARK NEON PORTFOLIO // V2.0</p>
+        <p>© <span id="yearNow"></span> <span data-bind="footerName">Jaisy</span> — Built with curiosity and care.</p>
+        <a href="#top" class="hover:text-cyberCyan transition-colors">Back to top ↑</a>
       </div>
     </footer>
   </main>
@@ -711,62 +937,6 @@
       </div>
       <div id="modalContent" class="mt-6 space-y-5 text-sm text-slate-200"></div>
     </div>
-  </div>
-
-  <div id="drawerBackdrop" class="drawer-backdrop fixed inset-0 z-50 hidden bg-black/70 backdrop-blur-xs opacity-0">
-    <aside id="drawerPanel" class="drawer-panel fixed top-0 right-0 h-full w-full max-w-md bg-surface border-l border-white/15 p-6 sm:p-8 overflow-y-auto translate-x-full shadow-2xl flex flex-col justify-between">
-      <div>
-        <div class="flex items-center justify-between pb-5 border-b border-white/10">
-          <div>
-            <span class="font-mono text-xs text-cyberCyan uppercase">Live Studio Editor</span>
-            <h3 class="font-display font-bold text-2xl text-white">Customize Portfolio</h3>
-          </div>
-          <button id="closeDrawerBtn" class="w-9 h-9 rounded-xl bg-white/10 hover:bg-vibrantCoral text-white font-bold flex items-center justify-center transition-colors cursor-pointer">
-            ✕
-          </button>
-        </div>
-
-        <form id="profileForm" class="mt-6 space-y-4 text-sm">
-          <div>
-            <label class="block font-semibold text-slate-300 mb-1.5">Display Name / Alias</label>
-            <input type="text" id="fieldName" class="w-full bg-void border border-white/15 focus:border-cyberCyan rounded-xl px-4 py-2.5 text-white focus:outline-none" placeholder="e.g. Alex Vance" />
-          </div>
-
-          <div>
-            <label class="block font-semibold text-slate-300 mb-1.5">Hero Bio</label>
-            <textarea id="fieldBio" rows="3" class="w-full bg-void border border-white/15 focus:border-cyberCyan rounded-xl px-4 py-2.5 text-white focus:outline-none resize-none" placeholder="Short intro about your Python builds & video edits..."></textarea>
-          </div>
-
-          <div>
-            <label class="block font-semibold text-slate-300 mb-1.5">GitHub URL or Username</label>
-            <input type="text" id="fieldGithub" class="w-full bg-void border border-white/15 focus:border-cyberCyan rounded-xl px-4 py-2.5 text-white focus:outline-none" placeholder="https://github.com/yourusername" />
-          </div>
-
-          <div>
-            <label class="block font-semibold text-slate-300 mb-1.5">Social Handle (TikTok / IG)</label>
-            <input type="text" id="fieldSocial" class="w-full bg-void border border-white/15 focus:border-cyberCyan rounded-xl px-4 py-2.5 text-white focus:outline-none" placeholder="@yourusername" />
-          </div>
-
-          <div>
-            <label class="block font-semibold text-slate-300 mb-1.5">Contact Email</label>
-            <input type="email" id="fieldEmail" class="w-full bg-void border border-white/15 focus:border-cyberCyan rounded-xl px-4 py-2.5 text-white focus:outline-none" placeholder="you@example.com" />
-          </div>
-
-          <div class="pt-3 flex gap-3">
-            <button type="submit" class="flex-1 py-3 px-4 rounded-xl font-bold text-white bg-gradient-to-r from-neonPurple to-cyberCyan shadow-lg shadow-neonPurple/25 hover:opacity-95 transition-opacity cursor-pointer">
-              Save &amp; Apply
-            </button>
-            <button type="button" id="resetDefaultBtn" class="py-3 px-4 rounded-xl font-semibold text-slate-300 bg-white/5 hover:bg-white/10 border border-white/10 transition-colors cursor-pointer">
-              Reset
-            </button>
-          </div>
-        </form>
-      </div>
-
-      <p class="mt-8 text-xs font-mono text-slate-500">
-        Changes persist automatically in your browser's localStorage.
-      </p>
-    </aside>
   </div>
 
   <div id="toastBanner" class="fixed bottom-6 right-6 z-50 translate-y-24 opacity-0 transition-all duration-300 pointer-events-none">
@@ -868,7 +1038,7 @@
     });
     window.addEventListener('resize', resizeCanvas);
 
-    const roles = ['Python Developer', 'Velocity Video Editor', 'Problem Solver'];
+    const roles = ['Python Developer', 'Video Editor', 'Problem Solver'];
     let roleIndex = 0;
     let charIndex = 0;
     let isDeleting = false;
@@ -935,21 +1105,17 @@
     });
 
     const defaultProfile = {
-      name: '[Your Name]',
-      bio: 'I engineer logical Python applications from scratch—from lossless compression engines to algorithmic toolkits—and craft razor-sharp velocity edits with custom speed graphs, beat-sync impact, and dynamic zoom curves.',
-      github: 'https://github.com/yourusername',
-      social: '@yourusername',
-      email: 'you@example.com'
+      name: 'Jaisy',
+      bio: 'I engineer logical Python applications from scratch—from lossless compression engines to algorithmic toolkits—and craft razor-sharp edits with custom speed graphs, beat-sync impact, and dynamic zoom curves.',
+      github: 'https://github.com/jaisy001',
+      social: '@only1jaisy',
+      email: 'seunobafemi4real@gmail.com'
     };
 
-    let profile = { ...defaultProfile };
-    try {
-      const saved = localStorage.getItem('neon_portfolio_v2');
-      if (saved) profile = { ...defaultProfile, ...JSON.parse(saved) };
-    } catch (e) {}
+    const profile = { ...defaultProfile };
 
     function syncProfileUI() {
-      document.title = `${profile.name} — Python Developer & Velocity Video Editor`;
+      document.title = `${profile.name} — Code Builds & High-Energy Edits`;
       document.querySelectorAll('[data-bind="brandName"], [data-bind="heroName"], [data-bind="cardName"], [data-bind="footerName"]').forEach(el => {
         el.textContent = profile.name;
       });
@@ -963,7 +1129,7 @@
       const ghHandle = '@' + cleanGhUrl.replace(/^https?:\/\/(www\.)?github\.com\//i, '').replace(/\/$/, '');
 
       const socialHandle = profile.social.startsWith('@') ? profile.social : `@${profile.social}`;
-      const socialUrl = `https://tiktok.com/${socialHandle}`;
+      const socialUrl = `https://www.tiktok.com/${socialHandle}`;
 
       document.getElementById('githubAnchor').href = cleanGhUrl;
       document.querySelector('[data-bind="githubDisplay"]').textContent = ghHandle;
@@ -993,63 +1159,6 @@
       showToast(`Copied ${profile.email} to clipboard!`);
     });
 
-    const drawerBackdrop = document.getElementById('drawerBackdrop');
-    const drawerPanel = document.getElementById('drawerPanel');
-
-    function openDrawer() {
-      document.getElementById('fieldName').value = profile.name === '[Your Name]' ? '' : profile.name;
-      document.getElementById('fieldBio').value = profile.bio;
-      document.getElementById('fieldGithub').value = profile.github;
-      document.getElementById('fieldSocial').value = profile.social;
-      document.getElementById('fieldEmail').value = profile.email;
-
-      drawerBackdrop.classList.remove('hidden');
-      requestAnimationFrame(() => {
-        drawerBackdrop.classList.remove('opacity-0');
-        drawerPanel.classList.remove('translate-x-full');
-      });
-    }
-
-    function closeDrawer() {
-      drawerBackdrop.classList.add('opacity-0');
-      drawerPanel.classList.add('translate-x-full');
-      setTimeout(() => {
-        drawerBackdrop.classList.add('hidden');
-      }, 320);
-    }
-
-    document.getElementById('openDrawerBtn').addEventListener('click', openDrawer);
-    document.getElementById('closeDrawerBtn').addEventListener('click', closeDrawer);
-    drawerBackdrop.addEventListener('click', (e) => {
-      if (e.target === drawerBackdrop) closeDrawer();
-    });
-
-    document.getElementById('profileForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      profile = {
-        name: document.getElementById('fieldName').value.trim() || defaultProfile.name,
-        bio: document.getElementById('fieldBio').value.trim() || defaultProfile.bio,
-        github: document.getElementById('fieldGithub').value.trim() || defaultProfile.github,
-        social: document.getElementById('fieldSocial').value.trim() || defaultProfile.social,
-        email: document.getElementById('fieldEmail').value.trim() || defaultProfile.email
-      };
-      try {
-        localStorage.setItem('neon_portfolio_v2', JSON.stringify(profile));
-      } catch (err) {}
-      syncProfileUI();
-      closeDrawer();
-      showToast('Portfolio saved & updated live!');
-    });
-
-    document.getElementById('resetDefaultBtn').addEventListener('click', () => {
-      profile = { ...defaultProfile };
-      try {
-        localStorage.removeItem('neon_portfolio_v2');
-      } catch (err) {}
-      syncProfileUI();
-      closeDrawer();
-      showToast('Reset to default values.');
-    });
 
     let activeModalInterval = null;
 
@@ -1295,9 +1404,9 @@
 
       if (type === 'velocity') {
         tagEl.textContent = 'CAPCUT PRO // BEAT-PULSE & SPEED GRAPH';
-        headingEl.textContent = 'Velocity & Beat-Sync Visualizer';
+        headingEl.textContent = '& Beat-Sync Visualizer';
         contentEl.innerHTML = `
-          <p class="text-slate-300">Simulated 145 BPM beat transient monitor paired with a velocity speed-ramp curve (3.8x rush → 0.35x optical-flow slow-mo):</p>
+          <p class="text-slate-300">Simulated 145 BPM beat transient monitor paired with a speed-ramp curve (3.8x rush → 0.35x optical-flow slow-mo):</p>
           <div class="bg-void/90 border border-white/10 rounded-2xl p-5 space-y-4">
             <div class="flex items-center justify-between text-xs font-mono">
               <span class="text-vibrantCoral font-bold">● BEAT PULSE MONITOR</span>
@@ -1349,7 +1458,7 @@
           <div class="grid sm:grid-cols-3 gap-3 text-xs font-mono">
             <div class="bg-void border border-white/10 rounded-2xl p-4">
               <span class="text-cyberCyan font-bold block mb-1">01. EASE-IN</span>
-              <p class="text-slate-300">Ramp velocity from 1.0x up to 3.2x right before the directional apex.</p>
+              <p class="text-slate-300">Ramp from 1.0x up to 3.2x right before the directional apex.</p>
             </div>
             <div class="bg-void border border-white/10 rounded-2xl p-4">
               <span class="text-vibrantCoral font-bold block mb-1">02. APEX SPLIT</span>
@@ -1398,12 +1507,83 @@
       modal.classList.add('flex');
     }
 
+
+    // Premium navigation, scroll progress, reveal-on-scroll and mailto contact workflow.
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+
+    function closeMobileMenu() {
+      if (!mobileMenu || !mobileMenuBtn) return;
+      mobileMenu.classList.add('hidden');
+      mobileMenuBtn.setAttribute('aria-expanded', 'false');
+      mobileMenuBtn.setAttribute('aria-label', 'Open navigation menu');
+    }
+    if (mobileMenuBtn && mobileMenu) {
+      mobileMenuBtn.addEventListener('click', () => {
+        const opening = mobileMenu.classList.contains('hidden');
+        mobileMenu.classList.toggle('hidden');
+        mobileMenuBtn.setAttribute('aria-expanded', String(opening));
+        mobileMenuBtn.setAttribute('aria-label', opening ? 'Close navigation menu' : 'Open navigation menu');
+      });
+      mobileMenu.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMobileMenu));
+    }
+
+    const scrollProgress = document.getElementById('scrollProgress');
+    function updateScrollProgress() {
+      if (!scrollProgress) return;
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = scrollable > 0 ? (window.scrollY / scrollable) * 100 : 0;
+      scrollProgress.style.width = `${Math.min(100, Math.max(0, progress))}%`;
+    }
+    window.addEventListener('scroll', updateScrollProgress, { passive: true });
+    window.addEventListener('resize', updateScrollProgress, { passive: true });
+
+    const revealItems = document.querySelectorAll('#about .reveal, #approach .reveal, #contact .reveal');
+    if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const revealObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12 });
+      revealItems.forEach(item => revealObserver.observe(item));
+    } else {
+      revealItems.forEach(item => item.classList.add('is-visible'));
+    }
+
+    const contactForm = document.getElementById('contactForm');
+    if (contactForm) {
+      contactForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        if (!contactForm.reportValidity()) return;
+        const name = document.getElementById('contactName').value.trim();
+        const sender = document.getElementById('contactEmail').value.trim();
+        const topic = document.getElementById('contactTopic').value;
+        const message = document.getElementById('contactMessage').value.trim();
+        const subject = encodeURIComponent(`Portfolio enquiry: ${topic}`);
+        const body = encodeURIComponent(`Hi Jaisy,\\n\\n${message}\\n\\nFrom: ${name}\\nReply to: ${sender}`);
+        const recipient = profile.email || defaultProfile.email;
+        document.getElementById('contactFormStatus').textContent = 'Your email app should open with the message prepared.';
+        window.location.href = `mailto:${recipient}?subject=${subject}&body=${body}`;
+      });
+    }
+
+    // Respect reduced-motion preferences for the canvas animation.
+    const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (reducedMotionQuery.matches) {
+      const canvasEl = document.getElementById('bgCanvas');
+      if (canvasEl) canvasEl.style.display = 'none';
+    }
+
     window.addEventListener('load', () => {
       resizeCanvas();
       drawBackground();
       tickTyping();
       syncProfileUI();
-      document.getElementById('yearNow').textContent = new Date().getFullYear();
+      document.getElementById('yearNow').textContent = '2025';
+      updateScrollProgress();
     });
   </script>
 </body>
