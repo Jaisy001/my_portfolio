@@ -1,0 +1,1410 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>[Your Name] — Python Developer & Velocity Video Editor</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Space Grotesk', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            void: '#07070D',
+            surface: '#0F101A',
+            surfaceLight: '#171929',
+            neonPurple: '#A855F7',
+            cyberCyan: '#06B6D4',
+            vibrantCoral: '#FF5E62',
+            neonAmber: '#F59E0B',
+            neonLime: '#84CC16',
+          },
+          animation: {
+            'gradient-x': 'gradientX 8s ease infinite',
+            'float': 'float 6s ease-in-out infinite',
+            'pulse-glow': 'pulseGlow 3s ease-in-out infinite',
+          },
+          keyframes: {
+            gradientX: {
+              '0%, 100%': { 'background-position': '0% 50%' },
+              '50%': { 'background-position': '100% 50%' },
+            },
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-10px)' },
+            },
+            pulseGlow: {
+              '0%, 100%': { opacity: '0.6', transform: 'scale(1)' },
+              '50%': { opacity: '1', transform: 'scale(1.05)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #07070D;
+      color: #F8FAFC;
+      overflow-x: hidden;
+    }
+
+    #bgCanvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .mesh-blob {
+      position: fixed;
+      border-radius: 9999px;
+      filter: blur(110px);
+      opacity: 0.22;
+      pointer-events: none;
+      z-index: 0;
+      animation: pulseGlow 9s ease-in-out infinite;
+    }
+
+    .glass-panel {
+      background: rgba(15, 16, 26, 0.72);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
+    }
+
+    .bento-card {
+      background: linear-gradient(145deg, rgba(23, 25, 41, 0.85), rgba(13, 14, 24, 0.92));
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.25s ease, box-shadow 0.25s ease;
+      transform-style: preserve-3d;
+      will-change: transform;
+    }
+
+    .bento-card:hover {
+      border-color: rgba(168, 85, 247, 0.55);
+      box-shadow: 0 24px 48px -12px rgba(168, 85, 247, 0.22), 0 0 24px -4px rgba(6, 182, 212, 0.18);
+    }
+
+    .bento-card.video-card:hover {
+      border-color: rgba(255, 94, 98, 0.6);
+      box-shadow: 0 24px 48px -12px rgba(255, 94, 98, 0.25), 0 0 24px -4px rgba(245, 158, 11, 0.2);
+    }
+
+    .neon-gradient-text {
+      background: linear-gradient(120deg, #A855F7, #06B6D4, #FF5E62, #F59E0B, #A855F7);
+      background-size: 250% 250%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: gradientX 7s ease infinite;
+    }
+
+    .typing-cursor {
+      display: inline-block;
+      width: 3px;
+      height: 1.05em;
+      background-color: #06B6D4;
+      margin-left: 4px;
+      vertical-align: middle;
+      animation: blink 0.8s steps(2, start) infinite;
+    }
+
+    @keyframes blink {
+      to { visibility: hidden; }
+    }
+
+    @keyframes barDance {
+      0%, 100% { transform: scaleY(0.25); }
+      50% { transform: scaleY(1); }
+    }
+
+    .eq-bar {
+      transform-origin: bottom;
+      animation: barDance 0.85s ease-in-out infinite;
+    }
+
+    .drawer-backdrop {
+      transition: opacity 0.3s ease;
+    }
+
+    .drawer-panel {
+      transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #07070D;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #27293D;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #A855F7;
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-neonPurple selection:text-white">
+
+  <canvas id="bgCanvas"></canvas>
+  <div class="mesh-blob w-[460px] h-[460px] bg-neonPurple -top-28 -left-24"></div>
+  <div class="mesh-blob w-[420px] h-[420px] bg-cyberCyan top-1/3 -right-28" style="animation-delay: 2.5s;"></div>
+  <div class="mesh-blob w-[380px] h-[380px] bg-vibrantCoral bottom-0 left-1/4" style="animation-delay: 5s;"></div>
+
+  <nav class="sticky top-0 z-40 glass-panel border-b border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <a href="#top" class="flex items-center gap-3 group">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-neonPurple via-cyberCyan to-vibrantCoral p-[1.5px] shadow-lg shadow-neonPurple/30 group-hover:rotate-6 transition-transform">
+          <div class="w-full h-full bg-void rounded-[10px] flex items-center justify-center font-mono font-bold text-sm text-white">
+            &lt;/&gt;
+          </div>
+        </div>
+        <span class="font-display font-bold text-lg tracking-tight text-white" data-bind="brandName">[Your Name]</span>
+      </a>
+
+      <div class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
+        <a href="#projects" class="hover:text-cyberCyan transition-colors">Projects &amp; Edits</a>
+        <a href="#skills" class="hover:text-neonPurple transition-colors">Stack &amp; Proficiency</a>
+        <a href="#contact" class="hover:text-vibrantCoral transition-colors">Contact</a>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button id="openDrawerBtn" class="relative inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold text-white bg-surfaceLight hover:bg-white/10 border border-white/15 shadow-lg shadow-neonPurple/10 transition-all cursor-pointer">
+          <span class="w-2 h-2 rounded-full bg-cyberCyan animate-ping"></span>
+          <span>Customize Portfolio</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="relative z-10">
+    <section id="top" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-20 sm:pt-24 sm:pb-28">
+      <div class="grid lg:grid-cols-12 gap-12 items-center">
+        <div class="lg:col-span-7 space-y-6">
+          <div class="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white/[0.05] border border-white/10 text-xs font-mono text-cyberCyan">
+            <span class="w-2 h-2 rounded-full bg-neonLime shadow-[0_0_10px_#84CC16]"></span>
+            <span>AVAILABLE FOR CODE BUILDS &amp; HIGH-ENERGY EDITS</span>
+          </div>
+
+          <h1 class="font-display font-bold text-4xl sm:text-6xl lg:text-[64px] leading-[1.06] tracking-tight text-white">
+            Hi, I'm <span class="neon-gradient-text" data-bind="heroName">[Your Name]</span>
+          </h1>
+
+          <div class="font-display font-bold text-2xl sm:text-3xl lg:text-4xl text-slate-200 min-h-[44px] flex items-center">
+            <span class="text-slate-400 mr-2.5">&gt;</span>
+            <span id="typingRole" class="text-transparent bg-clip-text bg-gradient-to-r from-cyberCyan via-neonPurple to-vibrantCoral">Python Developer</span>
+            <span class="typing-cursor"></span>
+          </div>
+
+          <p class="text-slate-300 text-base sm:text-lg max-w-2xl leading-relaxed" data-bind="bioText">
+            I engineer logical Python applications from scratch—from lossless compression engines to algorithmic toolkits—and craft razor-sharp velocity edits with custom speed graphs, beat-sync impact, and dynamic zoom curves.
+          </p>
+
+          <div class="flex flex-wrap items-center gap-4 pt-3">
+            <a href="#projects" class="group relative inline-flex items-center gap-2.5 px-7 py-3.5 rounded-2xl font-bold text-sm sm:text-base text-white bg-gradient-to-r from-neonPurple via-cyberCyan to-vibrantCoral bg-[length:200%_auto] hover:bg-right transition-all duration-500 shadow-[0_0_25px_rgba(168,85,247,0.45)]">
+              <span>Explore Projects &amp; Edits</span>
+              <span class="group-hover:translate-y-0.5 transition-transform">↓</span>
+            </a>
+
+            <a href="#contact" class="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl font-semibold text-sm sm:text-base text-slate-200 bg-white/[0.04] hover:bg-white/[0.09] border border-white/15 transition-all">
+              <span>Let's Collaborate</span>
+              <span class="text-neonAmber">⚡</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="lg:col-span-5">
+          <div data-tilt class="bento-card rounded-3xl p-6 sm:p-8 relative overflow-hidden">
+            <div class="absolute -top-20 -right-20 w-44 h-44 bg-neonPurple/30 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-20 -left-20 w-44 h-44 bg-vibrantCoral/25 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="flex items-center justify-between pb-5 border-b border-white/10">
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-vibrantCoral"></span>
+                <span class="w-3 h-3 rounded-full bg-neonAmber"></span>
+                <span class="w-3 h-3 rounded-full bg-neonLime"></span>
+              </div>
+              <span class="font-mono text-xs text-slate-400 bg-white/5 px-3 py-1 rounded-full border border-white/10">
+                dual_engine.config
+              </span>
+            </div>
+
+            <div class="mt-6 space-y-5">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-xs font-mono text-cyberCyan uppercase tracking-wider">Primary Identity</p>
+                  <h2 class="font-display font-bold text-xl text-white mt-0.5" data-bind="cardName">[Your Name]</h2>
+                </div>
+                <div class="px-3 py-1.5 rounded-xl bg-neonPurple/15 border border-neonPurple/40 font-mono text-xs font-semibold text-neonPurple">
+                  60 FPS + O(n)
+                </div>
+              </div>
+
+              <div class="grid grid-cols-3 gap-3">
+                <div class="bg-void/70 border border-white/10 rounded-2xl p-3.5 text-center">
+                  <div class="font-display font-bold text-xl sm:text-2xl text-cyberCyan">100%</div>
+                  <div class="text-[11px] text-slate-400 mt-1">From-Scratch Logic</div>
+                </div>
+                <div class="bg-void/70 border border-white/10 rounded-2xl p-3.5 text-center">
+                  <div class="font-display font-bold text-xl sm:text-2xl text-vibrantCoral">60fps</div>
+                  <div class="text-[11px] text-slate-400 mt-1">Optical Flow Sync</div>
+                </div>
+                <div class="bg-void/70 border border-white/10 rounded-2xl p-3.5 text-center">
+                  <div class="font-display font-bold text-xl sm:text-2xl text-neonAmber">2x</div>
+                  <div class="text-[11px] text-slate-400 mt-1">Creative Modes</div>
+                </div>
+              </div>
+
+              <div class="bg-void/80 border border-white/10 rounded-2xl p-4 font-mono text-xs space-y-2">
+                <div class="flex items-center justify-between text-slate-400">
+                  <span>// LIVE TELEMETRY</span>
+                  <span class="text-neonLime">● ACTIVE</span>
+                </div>
+                <p class="text-slate-200 leading-relaxed">
+                  <span class="text-neonPurple">engine</span> = {<span class="text-cyberCyan">"code"</span>: <span class="text-neonAmber">"Python 3"</span>, <span class="text-vibrantCoral">"motion"</span>: <span class="text-neonAmber">"CapCut Pro &amp; Alight"</span>}
+                </p>
+                <div class="flex items-end gap-1.5 h-8 pt-1">
+                  <span class="eq-bar flex-1 bg-neonPurple rounded-t h-full" style="animation-delay: 0.05s"></span>
+                  <span class="eq-bar flex-1 bg-cyberCyan rounded-t h-full" style="animation-delay: 0.2s"></span>
+                  <span class="eq-bar flex-1 bg-vibrantCoral rounded-t h-full" style="animation-delay: 0.35s"></span>
+                  <span class="eq-bar flex-1 bg-neonAmber rounded-t h-full" style="animation-delay: 0.15s"></span>
+                  <span class="eq-bar flex-1 bg-neonPurple rounded-t h-full" style="animation-delay: 0.45s"></span>
+                  <span class="eq-bar flex-1 bg-cyberCyan rounded-t h-full" style="animation-delay: 0.25s"></span>
+                  <span class="eq-bar flex-1 bg-vibrantCoral rounded-t h-full" style="animation-delay: 0.1s"></span>
+                  <span class="eq-bar flex-1 bg-neonAmber rounded-t h-full" style="animation-delay: 0.4s"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="projects" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+        <div>
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-neonPurple/15 border border-neonPurple/35 text-neonPurple font-mono text-xs font-semibold mb-3">
+            <span>INTERACTIVE BENTO SHOWCASE</span>
+          </div>
+          <h2 class="font-display font-bold text-3xl sm:text-5xl text-white tracking-tight">
+            Featured <span class="neon-gradient-text">Builds &amp; Edits</span>
+          </h2>
+        </div>
+
+        <div class="inline-flex flex-wrap gap-1.5 p-1.5 rounded-2xl glass-panel border border-white/10" role="tablist">
+          <button class="filter-tab active px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-neonPurple to-cyberCyan shadow-lg transition-all cursor-pointer" data-filter="all">
+            All (6)
+          </button>
+          <button class="filter-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-slate-300 hover:text-white transition-all cursor-pointer" data-filter="code">
+            🐍 Python &amp; Code (3)
+          </button>
+          <button class="filter-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-slate-300 hover:text-white transition-all cursor-pointer" data-filter="video">
+            🎬 Video Edits (3)
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-6" id="bentoGrid">
+        <article data-tilt data-category="code" class="project-card bento-card md:col-span-7 rounded-3xl p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden group">
+          <div class="absolute top-0 right-0 w-48 h-48 bg-neonPurple/15 rounded-full blur-3xl group-hover:bg-neonPurple/25 transition-all pointer-events-none"></div>
+          <div>
+            <div class="flex items-center justify-between gap-3 mb-5">
+              <span class="px-3 py-1 rounded-full text-xs font-mono font-semibold bg-neonPurple/20 text-neonPurple border border-neonPurple/40">
+                PYTHON // DECISION ENGINE
+              </span>
+              <span class="font-mono text-xs text-slate-500">01</span>
+            </div>
+
+            <h3 class="font-display font-bold text-2xl sm:text-3xl text-white mb-3 group-hover:text-cyberCyan transition-colors">
+              Relationship Evaluation App
+            </h3>
+
+            <p class="text-slate-300 text-sm sm:text-base leading-relaxed mb-6">
+              A structured compatibility &amp; behavioral scoring engine built in Python. Evaluates weighted communication, trust, and shared-goal metrics using custom multi-condition boolean gates and persistent JSON/SQLite state.
+            </p>
+          </div>
+
+          <div class="space-y-5">
+            <div class="flex flex-wrap gap-2">
+              <span class="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 font-mono text-xs text-slate-300">Python 3</span>
+              <span class="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 font-mono text-xs text-slate-300">Weighted Scoring</span>
+              <span class="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 font-mono text-xs text-slate-300">JSON / SQLite</span>
+            </div>
+
+            <button onclick="openInteractiveModal('evaluator')" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-bold text-sm text-white bg-neonPurple hover:bg-neonPurple/90 shadow-lg shadow-neonPurple/25 transition-all cursor-pointer">
+              <span>Launch Live Scoring Mini-Demo</span>
+              <span>⚡</span>
+            </button>
+          </div>
+        </article>
+
+        <article data-tilt data-category="code" class="project-card bento-card md:col-span-5 rounded-3xl p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden group">
+          <div class="absolute bottom-0 right-0 w-40 h-40 bg-cyberCyan/15 rounded-full blur-3xl group-hover:bg-cyberCyan/25 transition-all pointer-events-none"></div>
+          <div>
+            <div class="flex items-center justify-between gap-3 mb-5">
+              <span class="px-3 py-1 rounded-full text-xs font-mono font-semibold bg-cyberCyan/20 text-cyberCyan border border-cyberCyan/40">
+                LOSSLESS COMPRESSION
+              </span>
+              <span class="font-mono text-xs text-slate-500">02</span>
+            </div>
+
+            <h3 class="font-display font-bold text-2xl text-white mb-3 group-hover:text-cyberCyan transition-colors">
+              Run-Length Encoding (RLE) Compressor
+            </h3>
+
+            <p class="text-slate-300 text-sm leading-relaxed mb-6">
+              Pure-Python string compression and decompression utility built without external libraries. Parses sequential character runs and computes real-time byte-savings ratios.
+            </p>
+          </div>
+
+          <div class="space-y-5">
+            <div class="flex flex-wrap gap-2">
+              <span class="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 font-mono text-xs text-slate-300">RLE Codec</span>
+              <span class="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 font-mono text-xs text-slate-300">Zero Dependencies</span>
+            </div>
+
+            <button onclick="openInteractiveModal('rle')" class="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-bold text-sm text-void bg-cyberCyan hover:bg-cyberCyan/90 shadow-lg shadow-cyberCyan/25 transition-all cursor-pointer">
+              <span>Open Encode/Decode Playground</span>
+              <span>↗</span>
+            </button>
+          </div>
+        </article>
+
+        <article data-tilt data-category="code" class="project-card bento-card md:col-span-5 rounded-3xl p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden group">
+          <div class="absolute top-0 left-0 w-40 h-40 bg-neonAmber/15 rounded-full blur-3xl group-hover:bg-neonAmber/25 transition-all pointer-events-none"></div>
+          <div>
+            <div class="flex items-center justify-between gap-3 mb-5">
+              <span class="px-3 py-1 rounded-full text-xs font-mono font-semibold bg-neonAmber/20 text-neonAmber border border-neonAmber/40">
+                CORE ALGORITHMS
+              </span>
+              <span class="font-mono text-xs text-slate-500">03</span>
+            </div>
+
+            <h3 class="font-display font-bold text-2xl text-white mb-3 group-hover:text-neonAmber transition-colors">
+              Max Subarray &amp; Sorting Toolkit
+            </h3>
+
+            <p class="text-slate-300 text-sm leading-relaxed mb-6">
+              Algorithmic fundamentals implemented from scratch: Kadane's O(n) maximum contiguous subarray scanner alongside manual in-place sorting mechanics with step-by-step pass tracing.
+            </p>
+          </div>
+
+          <div class="space-y-5">
+            <div class="flex flex-wrap gap-2">
+              <span class="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 font-mono text-xs text-slate-300">Kadane's O(n)</span>
+              <span class="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 font-mono text-xs text-slate-300">Manual Sort</span>
+            </div>
+
+            <button onclick="openInteractiveModal('toolkit')" class="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-bold text-sm text-void bg-neonAmber hover:bg-neonAmber/90 shadow-lg shadow-neonAmber/25 transition-all cursor-pointer">
+              <span>Run Visual Array Simulator</span>
+              <span>⚡</span>
+            </button>
+          </div>
+        </article>
+
+        <article data-tilt data-category="video" class="project-card bento-card video-card md:col-span-7 rounded-3xl p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden group">
+          <div class="absolute -bottom-16 -right-16 w-52 h-52 bg-vibrantCoral/20 rounded-full blur-3xl group-hover:bg-vibrantCoral/30 transition-all pointer-events-none"></div>
+          <div>
+            <div class="flex items-center justify-between gap-3 mb-5">
+              <span class="px-3 py-1 rounded-full text-xs font-mono font-semibold bg-vibrantCoral/20 text-vibrantCoral border border-vibrantCoral/40">
+                VELOCITY // BEAT-SYNC
+              </span>
+              <span class="font-mono text-xs text-slate-500">04</span>
+            </div>
+
+            <div class="grid sm:grid-cols-12 gap-5 items-center mb-5">
+              <div class="sm:col-span-7">
+                <h3 class="font-display font-bold text-2xl sm:text-3xl text-white mb-2.5 group-hover:text-vibrantCoral transition-colors">
+                  Velocity &amp; Beat-Sync Edits
+                </h3>
+                <p class="text-slate-300 text-sm leading-relaxed">
+                  High-impact rhythmic edits locked to snare transients and 808 drops. Combines 400% speed-up spikes with 35% optical-flow slow-mo dips and crisp flash frames.
+                </p>
+              </div>
+              <div class="sm:col-span-5 bg-void/80 border border-white/10 rounded-2xl p-3.5">
+                <div class="flex items-center justify-between text-[10px] font-mono text-vibrantCoral mb-2">
+                  <span>145 BPM SYNC</span>
+                  <span>CAPCUT PRO</span>
+                </div>
+                <div class="flex items-end gap-1 h-14">
+                  <span class="eq-bar flex-1 bg-vibrantCoral rounded-t h-full" style="animation-delay: 0.1s"></span>
+                  <span class="eq-bar flex-1 bg-neonAmber rounded-t h-full" style="animation-delay: 0.3s"></span>
+                  <span class="eq-bar flex-1 bg-neonPurple rounded-t h-full" style="animation-delay: 0.15s"></span>
+                  <span class="eq-bar flex-1 bg-cyberCyan rounded-t h-full" style="animation-delay: 0.4s"></span>
+                  <span class="eq-bar flex-1 bg-vibrantCoral rounded-t h-full" style="animation-delay: 0.2s"></span>
+                  <span class="eq-bar flex-1 bg-neonAmber rounded-t h-full" style="animation-delay: 0.35s"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center justify-between gap-4 pt-2">
+            <div class="flex flex-wrap gap-2">
+              <span class="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 font-mono text-xs text-slate-300">CapCut Pro</span>
+              <span class="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 font-mono text-xs text-slate-300">Optical Flow</span>
+            </div>
+
+            <button onclick="openInteractiveModal('velocity')" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-bold text-sm text-white bg-gradient-to-r from-vibrantCoral to-neonAmber shadow-lg shadow-vibrantCoral/25 transition-all cursor-pointer">
+              <span>Open Beat-Pulse &amp; Speed Visualizer</span>
+              <span>▶</span>
+            </button>
+          </div>
+        </article>
+
+        <article data-tilt data-category="video" class="project-card bento-card video-card md:col-span-6 rounded-3xl p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden group">
+          <div>
+            <div class="flex items-center justify-between gap-3 mb-5">
+              <span class="px-3 py-1 rounded-full text-xs font-mono font-semibold bg-cyberCyan/20 text-cyberCyan border border-cyberCyan/40">
+                TIME-REMAP // REVERSE
+              </span>
+              <span class="font-mono text-xs text-slate-500">05</span>
+            </div>
+
+            <h3 class="font-display font-bold text-2xl text-white mb-3 group-hover:text-cyberCyan transition-colors">
+              Reverse &amp; Time-Remap Edits
+            </h3>
+
+            <p class="text-slate-300 text-sm leading-relaxed mb-6">
+              Seamless forward-to-reverse momentum flips sculpted with custom cubic-bezier speed graphs so directional reversals feel weightless and fluid.
+            </p>
+          </div>
+
+          <div class="space-y-5">
+            <div class="flex flex-wrap gap-2">
+              <span class="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 font-mono text-xs text-slate-300">Speed Graphs</span>
+              <span class="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 font-mono text-xs text-slate-300">VN Editor</span>
+              <span class="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 font-mono text-xs text-slate-300">CapCut Pro</span>
+            </div>
+
+            <button onclick="openInteractiveModal('timeremap')" class="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-bold text-sm text-white bg-white/10 hover:bg-cyberCyan hover:text-void border border-white/15 transition-all cursor-pointer">
+              <span>Inspect Time-Remap Breakdown</span>
+              <span>▶</span>
+            </button>
+          </div>
+        </article>
+
+        <article data-tilt data-category="video" class="project-card bento-card video-card md:col-span-6 rounded-3xl p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden group">
+          <div>
+            <div class="flex items-center justify-between gap-3 mb-5">
+              <span class="px-3 py-1 rounded-full text-xs font-mono font-semibold bg-neonPurple/20 text-neonPurple border border-neonPurple/40">
+                KEYFRAME GRAPHING
+              </span>
+              <span class="font-mono text-xs text-slate-500">06</span>
+            </div>
+
+            <h3 class="font-display font-bold text-2xl text-white mb-3 group-hover:text-neonPurple transition-colors">
+              Dynamic Zoom Curves
+            </h3>
+
+            <p class="text-slate-300 text-sm leading-relaxed mb-6">
+              Punch-in and ease-out camera motion engineered with custom overshoot keyframe graphs, directional motion blur, and damped impact shakes.
+            </p>
+          </div>
+
+          <div class="space-y-5">
+            <div class="flex flex-wrap gap-2">
+              <span class="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 font-mono text-xs text-slate-300">Alight Motion</span>
+              <span class="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 font-mono text-xs text-slate-300">Bezier Overshoot</span>
+            </div>
+
+            <button onclick="openInteractiveModal('zoomcurve')" class="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-bold text-sm text-white bg-white/10 hover:bg-neonPurple border border-white/15 transition-all cursor-pointer">
+              <span>Interactive Zoom Curve Preview</span>
+              <span>▶</span>
+            </button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="skills" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div class="mb-10">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-cyberCyan/15 border border-cyberCyan/35 text-cyberCyan font-mono text-xs font-semibold mb-3">
+          <span>ARSENAL &amp; PROFICIENCY</span>
+        </div>
+        <h2 class="font-display font-bold text-3xl sm:text-5xl text-white tracking-tight">
+          Skills &amp; <span class="neon-gradient-text">Creative Stack</span>
+        </h2>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-6">
+        <div data-tilt class="bento-card rounded-3xl p-6 sm:p-8 space-y-6">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-11 h-11 rounded-2xl bg-neonPurple/20 border border-neonPurple/40 flex items-center justify-center text-xl">
+                🐍
+              </div>
+              <div>
+                <h3 class="font-display font-bold text-xl sm:text-2xl text-white">Development &amp; Logic</h3>
+                <p class="text-xs font-mono text-slate-400">Clean architecture &amp; algorithmic thinking</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <div class="bg-void/70 border border-white/10 rounded-2xl p-4">
+              <div class="flex justify-between items-center text-sm font-semibold mb-2">
+                <span class="text-white flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-neonPurple"></span>Python 3 &amp; Algorithmic Logic</span>
+                <span class="font-mono text-xs text-neonPurple">92%</span>
+              </div>
+              <div class="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-neonPurple to-cyberCyan rounded-full" style="width: 92%"></div>
+              </div>
+            </div>
+
+            <div class="bg-void/70 border border-white/10 rounded-2xl p-4">
+              <div class="flex justify-between items-center text-sm font-semibold mb-2">
+                <span class="text-white flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-cyberCyan"></span>VS Code Workflow &amp; Debugging</span>
+                <span class="font-mono text-xs text-cyberCyan">90%</span>
+              </div>
+              <div class="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-cyberCyan to-neonLime rounded-full" style="width: 90%"></div>
+              </div>
+            </div>
+
+            <div class="bg-void/70 border border-white/10 rounded-2xl p-4">
+              <div class="flex justify-between items-center text-sm font-semibold mb-2">
+                <span class="text-white flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-neonAmber"></span>Git &amp; GitHub Version Control</span>
+                <span class="font-mono text-xs text-neonAmber">85%</span>
+              </div>
+              <div class="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-neonAmber to-vibrantCoral rounded-full" style="width: 85%"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap gap-2 pt-1">
+            <span class="px-3 py-1.5 rounded-full bg-neonPurple/15 border border-neonPurple/35 text-xs font-mono font-semibold text-neonPurple">Python</span>
+            <span class="px-3 py-1.5 rounded-full bg-cyberCyan/15 border border-cyberCyan/35 text-xs font-mono font-semibold text-cyberCyan">VS Code</span>
+            <span class="px-3 py-1.5 rounded-full bg-white/10 border border-white/15 text-xs font-mono font-semibold text-slate-200">GitHub</span>
+            <span class="px-3 py-1.5 rounded-full bg-neonLime/15 border border-neonLime/35 text-xs font-mono font-semibold text-neonLime">SQLite / JSON</span>
+          </div>
+        </div>
+
+        <div data-tilt class="bento-card video-card rounded-3xl p-6 sm:p-8 space-y-6">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-11 h-11 rounded-2xl bg-vibrantCoral/20 border border-vibrantCoral/40 flex items-center justify-center text-xl">
+                🎬
+              </div>
+              <div>
+                <h3 class="font-display font-bold text-xl sm:text-2xl text-white">Video Editing &amp; Motion</h3>
+                <p class="text-xs font-mono text-slate-400">Precision keyframing &amp; rhythm design</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <div class="bg-void/70 border border-white/10 rounded-2xl p-4">
+              <div class="flex justify-between items-center text-sm font-semibold mb-2">
+                <span class="text-white flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-vibrantCoral"></span>CapCut Pro (Velocity &amp; Speed Graphs)</span>
+                <span class="font-mono text-xs text-vibrantCoral">96%</span>
+              </div>
+              <div class="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-vibrantCoral to-neonAmber rounded-full" style="width: 96%"></div>
+              </div>
+            </div>
+
+            <div class="bg-void/70 border border-white/10 rounded-2xl p-4">
+              <div class="flex justify-between items-center text-sm font-semibold mb-2">
+                <span class="text-white flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-neonPurple"></span>Alight Motion (Zoom Curves &amp; Shakes)</span>
+                <span class="font-mono text-xs text-neonPurple">88%</span>
+              </div>
+              <div class="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-neonPurple to-vibrantCoral rounded-full" style="width: 88%"></div>
+              </div>
+            </div>
+
+            <div class="bg-void/70 border border-white/10 rounded-2xl p-4">
+              <div class="flex justify-between items-center text-sm font-semibold mb-2">
+                <span class="text-white flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-cyberCyan"></span>VN Editor (Clean Cuts &amp; Color)</span>
+                <span class="font-mono text-xs text-cyberCyan">86%</span>
+              </div>
+              <div class="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-cyberCyan to-neonPurple rounded-full" style="width: 86%"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap gap-2 pt-1">
+            <span class="px-3 py-1.5 rounded-full bg-vibrantCoral/15 border border-vibrantCoral/35 text-xs font-mono font-semibold text-vibrantCoral">CapCut Pro</span>
+            <span class="px-3 py-1.5 rounded-full bg-neonPurple/15 border border-neonPurple/35 text-xs font-mono font-semibold text-neonPurple">Alight Motion</span>
+            <span class="px-3 py-1.5 rounded-full bg-neonAmber/15 border border-neonAmber/35 text-xs font-mono font-semibold text-neonAmber">VN Editor</span>
+            <span class="px-3 py-1.5 rounded-full bg-cyberCyan/15 border border-cyberCyan/35 text-xs font-mono font-semibold text-cyberCyan">Speed Graphs</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer id="contact" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-20">
+      <div class="bento-card rounded-3xl p-8 sm:p-14 text-center relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-r from-neonPurple/10 via-cyberCyan/10 to-vibrantCoral/10 pointer-events-none"></div>
+        <div class="relative z-10 max-w-2xl mx-auto space-y-6">
+          <span class="inline-block px-3.5 py-1 rounded-full bg-white/10 border border-white/15 font-mono text-xs text-cyberCyan">
+            READY TO BUILD OR EDIT?
+          </span>
+
+          <h2 class="font-display font-bold text-3xl sm:text-5xl text-white tracking-tight">
+            Let's turn raw ideas into <span class="neon-gradient-text">high-impact work.</span>
+          </h2>
+
+          <p class="text-slate-300 text-sm sm:text-base">
+            Explore my repositories on GitHub, check out my latest edits on socials, or copy my email below.
+          </p>
+
+          <div class="flex flex-wrap items-center justify-center gap-4 pt-2">
+            <a id="githubAnchor" href="https://github.com/yourusername" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-2xl font-bold text-sm text-white bg-white/10 hover:bg-white/15 border border-white/15 transition-all">
+              <span>GitHub</span>
+              <span class="font-mono text-xs text-cyberCyan" data-bind="githubDisplay">@yourusername</span>
+              <span>↗</span>
+            </a>
+
+            <a id="socialAnchor" href="https://tiktok.com/@yourusername" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-2xl font-bold text-sm text-white bg-gradient-to-r from-vibrantCoral to-neonPurple shadow-lg shadow-vibrantCoral/20 transition-all">
+              <span>Socials</span>
+              <span class="font-mono text-xs text-white/90" data-bind="socialDisplay">@yourusername</span>
+              <span>↗</span>
+            </a>
+
+            <button id="copyEmailBtn" class="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-2xl font-bold text-sm text-void bg-cyberCyan hover:bg-cyberCyan/90 shadow-lg shadow-cyberCyan/20 transition-all cursor-pointer">
+              <span>📋 Copy Email:</span>
+              <span class="font-mono" data-bind="emailDisplay">you@example.com</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-8 flex flex-col sm:flex-row items-center justify-between text-xs font-mono text-slate-500 gap-2">
+        <p>© <span id="yearNow"></span> <span data-bind="footerName">[Your Name]</span> — Engineered with precision &amp; motion.</p>
+        <p>DARK NEON PORTFOLIO // V2.0</p>
+      </div>
+    </footer>
+  </main>
+
+  <div id="interactiveModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-md p-4">
+    <div class="glass-panel border border-white/15 rounded-3xl max-w-2xl w-full p-6 sm:p-8 relative max-h-[90vh] overflow-y-auto shadow-2xl">
+      <div class="flex items-start justify-between gap-4 pb-4 border-b border-white/10">
+        <div>
+          <span id="modalTag" class="inline-block px-2.5 py-0.5 rounded-md bg-neonPurple/20 border border-neonPurple/40 font-mono text-xs text-neonPurple mb-1.5">
+            INTERACTIVE DEMO
+          </span>
+          <h3 id="modalHeading" class="font-display font-bold text-2xl sm:text-3xl text-white">Title</h3>
+        </div>
+        <button onclick="closeInteractiveModal()" class="w-9 h-9 rounded-xl bg-white/10 hover:bg-vibrantCoral text-white font-bold flex items-center justify-center transition-colors cursor-pointer">
+          ✕
+        </button>
+      </div>
+      <div id="modalContent" class="mt-6 space-y-5 text-sm text-slate-200"></div>
+    </div>
+  </div>
+
+  <div id="drawerBackdrop" class="drawer-backdrop fixed inset-0 z-50 hidden bg-black/70 backdrop-blur-xs opacity-0">
+    <aside id="drawerPanel" class="drawer-panel fixed top-0 right-0 h-full w-full max-w-md bg-surface border-l border-white/15 p-6 sm:p-8 overflow-y-auto translate-x-full shadow-2xl flex flex-col justify-between">
+      <div>
+        <div class="flex items-center justify-between pb-5 border-b border-white/10">
+          <div>
+            <span class="font-mono text-xs text-cyberCyan uppercase">Live Studio Editor</span>
+            <h3 class="font-display font-bold text-2xl text-white">Customize Portfolio</h3>
+          </div>
+          <button id="closeDrawerBtn" class="w-9 h-9 rounded-xl bg-white/10 hover:bg-vibrantCoral text-white font-bold flex items-center justify-center transition-colors cursor-pointer">
+            ✕
+          </button>
+        </div>
+
+        <form id="profileForm" class="mt-6 space-y-4 text-sm">
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1.5">Display Name / Alias</label>
+            <input type="text" id="fieldName" class="w-full bg-void border border-white/15 focus:border-cyberCyan rounded-xl px-4 py-2.5 text-white focus:outline-none" placeholder="e.g. Alex Vance" />
+          </div>
+
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1.5">Hero Bio</label>
+            <textarea id="fieldBio" rows="3" class="w-full bg-void border border-white/15 focus:border-cyberCyan rounded-xl px-4 py-2.5 text-white focus:outline-none resize-none" placeholder="Short intro about your Python builds & video edits..."></textarea>
+          </div>
+
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1.5">GitHub URL or Username</label>
+            <input type="text" id="fieldGithub" class="w-full bg-void border border-white/15 focus:border-cyberCyan rounded-xl px-4 py-2.5 text-white focus:outline-none" placeholder="https://github.com/yourusername" />
+          </div>
+
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1.5">Social Handle (TikTok / IG)</label>
+            <input type="text" id="fieldSocial" class="w-full bg-void border border-white/15 focus:border-cyberCyan rounded-xl px-4 py-2.5 text-white focus:outline-none" placeholder="@yourusername" />
+          </div>
+
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1.5">Contact Email</label>
+            <input type="email" id="fieldEmail" class="w-full bg-void border border-white/15 focus:border-cyberCyan rounded-xl px-4 py-2.5 text-white focus:outline-none" placeholder="you@example.com" />
+          </div>
+
+          <div class="pt-3 flex gap-3">
+            <button type="submit" class="flex-1 py-3 px-4 rounded-xl font-bold text-white bg-gradient-to-r from-neonPurple to-cyberCyan shadow-lg shadow-neonPurple/25 hover:opacity-95 transition-opacity cursor-pointer">
+              Save &amp; Apply
+            </button>
+            <button type="button" id="resetDefaultBtn" class="py-3 px-4 rounded-xl font-semibold text-slate-300 bg-white/5 hover:bg-white/10 border border-white/10 transition-colors cursor-pointer">
+              Reset
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <p class="mt-8 text-xs font-mono text-slate-500">
+        Changes persist automatically in your browser's localStorage.
+      </p>
+    </aside>
+  </div>
+
+  <div id="toastBanner" class="fixed bottom-6 right-6 z-50 translate-y-24 opacity-0 transition-all duration-300 pointer-events-none">
+    <div class="glass-panel border border-cyberCyan/40 px-5 py-3 rounded-2xl text-sm font-semibold text-white flex items-center gap-2.5 shadow-xl">
+      <span class="w-2.5 h-2.5 rounded-full bg-cyberCyan"></span>
+      <span id="toastMsg">Updated!</span>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('bgCanvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    let mouse = { x: -1000, y: -1000 };
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      initParticles();
+    }
+
+    function initParticles() {
+      const count = Math.min(70, Math.floor((canvas.width * canvas.height) / 18000));
+      const palette = ['#A855F7', '#06B6D4', '#FF5E62', '#F59E0B'];
+      particles = Array.from({ length: count }, () => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        vx: (Math.random() - 0.5) * 0.45,
+        vy: (Math.random() - 0.5) * 0.45,
+        r: Math.random() * 2 + 1,
+        color: palette[Math.floor(Math.random() * palette.length)]
+      }));
+    }
+
+    function drawBackground() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.025)';
+      ctx.lineWidth = 1;
+      const gridSize = 64;
+      for (let x = 0; x < canvas.width; x += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+      }
+      for (let y = 0; y < canvas.height; y += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+      }
+
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.fill();
+
+        for (let j = i + 1; j < particles.length; j++) {
+          const q = particles[j];
+          const dx = p.x - q.x;
+          const dy = p.y - q.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist < 130) {
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(q.x, q.y);
+            ctx.strokeStyle = `rgba(168, 85, 247, ${0.14 * (1 - dist / 130)})`;
+            ctx.stroke();
+          }
+        }
+
+        const mdx = p.x - mouse.x;
+        const mdy = p.y - mouse.y;
+        const mdist = Math.hypot(mdx, mdy);
+        if (mdist < 170) {
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(mouse.x, mouse.y);
+          ctx.strokeStyle = `rgba(6, 182, 212, ${0.28 * (1 - mdist / 170)})`;
+          ctx.stroke();
+        }
+      }
+
+      requestAnimationFrame(drawBackground);
+    }
+
+    window.addEventListener('mousemove', (e) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    });
+    window.addEventListener('resize', resizeCanvas);
+
+    const roles = ['Python Developer', 'Velocity Video Editor', 'Problem Solver'];
+    let roleIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+    const typingEl = document.getElementById('typingRole');
+
+    function tickTyping() {
+      const current = roles[roleIndex];
+      if (!isDeleting) {
+        charIndex++;
+        typingEl.textContent = current.slice(0, charIndex);
+        if (charIndex === current.length) {
+          isDeleting = true;
+          setTimeout(tickTyping, 1700);
+          return;
+        }
+      } else {
+        charIndex--;
+        typingEl.textContent = current.slice(0, charIndex);
+        if (charIndex === 0) {
+          isDeleting = false;
+          roleIndex = (roleIndex + 1) % roles.length;
+        }
+      }
+      setTimeout(tickTyping, isDeleting ? 45 : 85);
+    }
+
+    document.querySelectorAll('[data-tilt]').forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        const rotateX = ((y - centerY) / centerY) * -6;
+        const rotateY = ((x - centerX) / centerX) * 6;
+        card.style.transform = `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) translateY(-4px)`;
+      });
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)';
+      });
+    });
+
+    const filterTabs = document.querySelectorAll('.filter-tab');
+    const projectCards = document.querySelectorAll('.project-card');
+
+    filterTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        filterTabs.forEach(t => {
+          t.classList.remove('active', 'text-white', 'bg-gradient-to-r', 'from-neonPurple', 'to-cyberCyan', 'shadow-lg');
+          t.classList.add('text-slate-300');
+        });
+        tab.classList.add('active', 'text-white', 'bg-gradient-to-r', 'from-neonPurple', 'to-cyberCyan', 'shadow-lg');
+        tab.classList.remove('text-slate-300');
+
+        const selected = tab.dataset.filter;
+        projectCards.forEach(card => {
+          if (selected === 'all' || card.dataset.category === selected) {
+            card.classList.remove('hidden');
+          } else {
+            card.classList.add('hidden');
+          }
+        });
+      });
+    });
+
+    const defaultProfile = {
+      name: '[Your Name]',
+      bio: 'I engineer logical Python applications from scratch—from lossless compression engines to algorithmic toolkits—and craft razor-sharp velocity edits with custom speed graphs, beat-sync impact, and dynamic zoom curves.',
+      github: 'https://github.com/yourusername',
+      social: '@yourusername',
+      email: 'you@example.com'
+    };
+
+    let profile = { ...defaultProfile };
+    try {
+      const saved = localStorage.getItem('neon_portfolio_v2');
+      if (saved) profile = { ...defaultProfile, ...JSON.parse(saved) };
+    } catch (e) {}
+
+    function syncProfileUI() {
+      document.title = `${profile.name} — Python Developer & Velocity Video Editor`;
+      document.querySelectorAll('[data-bind="brandName"], [data-bind="heroName"], [data-bind="cardName"], [data-bind="footerName"]').forEach(el => {
+        el.textContent = profile.name;
+      });
+      document.querySelectorAll('[data-bind="bioText"]').forEach(el => {
+        el.textContent = profile.bio;
+      });
+
+      const cleanGhUrl = profile.github.startsWith('http')
+        ? profile.github
+        : `https://github.com/${profile.github.replace(/^@/, '')}`;
+      const ghHandle = '@' + cleanGhUrl.replace(/^https?:\/\/(www\.)?github\.com\//i, '').replace(/\/$/, '');
+
+      const socialHandle = profile.social.startsWith('@') ? profile.social : `@${profile.social}`;
+      const socialUrl = `https://tiktok.com/${socialHandle}`;
+
+      document.getElementById('githubAnchor').href = cleanGhUrl;
+      document.querySelector('[data-bind="githubDisplay"]').textContent = ghHandle;
+
+      document.getElementById('socialAnchor').href = socialUrl;
+      document.querySelector('[data-bind="socialDisplay"]').textContent = socialHandle;
+
+      document.querySelector('[data-bind="emailDisplay"]').textContent = profile.email;
+    }
+
+    function showToast(msg) {
+      const banner = document.getElementById('toastBanner');
+      document.getElementById('toastMsg').textContent = msg;
+      banner.classList.remove('translate-y-24', 'opacity-0');
+      setTimeout(() => {
+        banner.classList.add('translate-y-24', 'opacity-0');
+      }, 2600);
+    }
+
+    document.getElementById('copyEmailBtn').addEventListener('click', () => {
+      const input = document.createElement('input');
+      input.value = profile.email;
+      document.body.appendChild(input);
+      input.select();
+      document.execCommand('copy');
+      document.body.removeChild(input);
+      showToast(`Copied ${profile.email} to clipboard!`);
+    });
+
+    const drawerBackdrop = document.getElementById('drawerBackdrop');
+    const drawerPanel = document.getElementById('drawerPanel');
+
+    function openDrawer() {
+      document.getElementById('fieldName').value = profile.name === '[Your Name]' ? '' : profile.name;
+      document.getElementById('fieldBio').value = profile.bio;
+      document.getElementById('fieldGithub').value = profile.github;
+      document.getElementById('fieldSocial').value = profile.social;
+      document.getElementById('fieldEmail').value = profile.email;
+
+      drawerBackdrop.classList.remove('hidden');
+      requestAnimationFrame(() => {
+        drawerBackdrop.classList.remove('opacity-0');
+        drawerPanel.classList.remove('translate-x-full');
+      });
+    }
+
+    function closeDrawer() {
+      drawerBackdrop.classList.add('opacity-0');
+      drawerPanel.classList.add('translate-x-full');
+      setTimeout(() => {
+        drawerBackdrop.classList.add('hidden');
+      }, 320);
+    }
+
+    document.getElementById('openDrawerBtn').addEventListener('click', openDrawer);
+    document.getElementById('closeDrawerBtn').addEventListener('click', closeDrawer);
+    drawerBackdrop.addEventListener('click', (e) => {
+      if (e.target === drawerBackdrop) closeDrawer();
+    });
+
+    document.getElementById('profileForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      profile = {
+        name: document.getElementById('fieldName').value.trim() || defaultProfile.name,
+        bio: document.getElementById('fieldBio').value.trim() || defaultProfile.bio,
+        github: document.getElementById('fieldGithub').value.trim() || defaultProfile.github,
+        social: document.getElementById('fieldSocial').value.trim() || defaultProfile.social,
+        email: document.getElementById('fieldEmail').value.trim() || defaultProfile.email
+      };
+      try {
+        localStorage.setItem('neon_portfolio_v2', JSON.stringify(profile));
+      } catch (err) {}
+      syncProfileUI();
+      closeDrawer();
+      showToast('Portfolio saved & updated live!');
+    });
+
+    document.getElementById('resetDefaultBtn').addEventListener('click', () => {
+      profile = { ...defaultProfile };
+      try {
+        localStorage.removeItem('neon_portfolio_v2');
+      } catch (err) {}
+      syncProfileUI();
+      closeDrawer();
+      showToast('Reset to default values.');
+    });
+
+    let activeModalInterval = null;
+
+    function closeInteractiveModal() {
+      if (activeModalInterval) {
+        clearInterval(activeModalInterval);
+        activeModalInterval = null;
+      }
+      const modal = document.getElementById('interactiveModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    document.getElementById('interactiveModal').addEventListener('click', (e) => {
+      if (e.target.id === 'interactiveModal') closeInteractiveModal();
+    });
+
+    function openInteractiveModal(type) {
+      if (activeModalInterval) {
+        clearInterval(activeModalInterval);
+        activeModalInterval = null;
+      }
+
+      const tagEl = document.getElementById('modalTag');
+      const headingEl = document.getElementById('modalHeading');
+      const contentEl = document.getElementById('modalContent');
+
+      if (type === 'evaluator') {
+        tagEl.textContent = 'PYTHON // LIVE SCORING ENGINE';
+        headingEl.textContent = 'Relationship Evaluation App';
+        contentEl.innerHTML = `
+          <p class="text-slate-300">Adjust the weighted behavioral sliders below to test the Python boolean &amp; threshold scoring logic in real time:</p>
+          <div class="bg-void/90 border border-white/10 rounded-2xl p-5 space-y-4">
+            <div>
+              <div class="flex justify-between text-xs font-mono mb-1">
+                <span>COMMUNICATION CLARITY</span>
+                <span id="valComm" class="text-cyberCyan font-bold">8 / 10</span>
+              </div>
+              <input id="sliderComm" type="range" min="1" max="10" value="8" class="w-full accent-cyberCyan cursor-pointer" />
+            </div>
+            <div>
+              <div class="flex justify-between text-xs font-mono mb-1">
+                <span>TRUST &amp; CONSISTENCY (CORE GATE)</span>
+                <span id="valTrust" class="text-neonPurple font-bold">9 / 10</span>
+              </div>
+              <input id="sliderTrust" type="range" min="1" max="10" value="9" class="w-full accent-neonPurple cursor-pointer" />
+            </div>
+            <div>
+              <div class="flex justify-between text-xs font-mono mb-1">
+                <span>SHARED LONG-TERM GOALS</span>
+                <span id="valGoals" class="text-vibrantCoral font-bold">7 / 10</span>
+              </div>
+              <input id="sliderGoals" type="range" min="1" max="10" value="7" class="w-full accent-vibrantCoral cursor-pointer" />
+            </div>
+            <div class="pt-3 border-t border-white/10 flex items-center justify-between">
+              <div>
+                <span class="text-[11px] font-mono text-slate-400 block">EVALUATOR VERDICT</span>
+                <span id="evalVerdict" class="font-display font-bold text-xl text-neonLime">Strong Alignment (81%)</span>
+              </div>
+              <span id="evalGateBadge" class="px-3 py-1 rounded-lg bg-neonLime/15 border border-neonLime/40 font-mono text-xs text-neonLime">CORE GATE: PASS</span>
+            </div>
+          </div>
+          <pre class="bg-void border border-white/10 rounded-2xl p-4 font-mono text-xs text-slate-300 overflow-x-auto">def evaluate(comm: int, trust: int, goals: int) -> dict:
+    if trust < 5:
+        return {"status": "BLOCKED", "verdict": "Core Trust Gate Failed"}
+    weighted = round((comm * 0.35 + trust * 0.40 + goals * 0.25) * 10)
+    return {"status": "PASS", "score": f"{weighted}%"}</pre>
+        `;
+
+        const updateEval = () => {
+          const c = Number(document.getElementById('sliderComm').value);
+          const t = Number(document.getElementById('sliderTrust').value);
+          const g = Number(document.getElementById('sliderGoals').value);
+          document.getElementById('valComm').textContent = `${c} / 10`;
+          document.getElementById('valTrust').textContent = `${t} / 10`;
+          document.getElementById('valGoals').textContent = `${g} / 10`;
+
+          const verdictEl = document.getElementById('evalVerdict');
+          const gateEl = document.getElementById('evalGateBadge');
+          const score = Math.round((c * 0.35 + t * 0.40 + g * 0.25) * 10);
+
+          if (t < 5) {
+            verdictEl.textContent = `Core Trust Gate Failed (${score}%)`;
+            verdictEl.className = 'font-display font-bold text-xl text-vibrantCoral';
+            gateEl.textContent = 'CORE GATE: FAIL';
+            gateEl.className = 'px-3 py-1 rounded-lg bg-vibrantCoral/15 border border-vibrantCoral/40 font-mono text-xs text-vibrantCoral';
+          } else if (score >= 75) {
+            verdictEl.textContent = `Strong Alignment (${score}%)`;
+            verdictEl.className = 'font-display font-bold text-xl text-neonLime';
+            gateEl.textContent = 'CORE GATE: PASS';
+            gateEl.className = 'px-3 py-1 rounded-lg bg-neonLime/15 border border-neonLime/40 font-mono text-xs text-neonLime';
+          } else {
+            verdictEl.textContent = `Moderate Potential (${score}%)`;
+            verdictEl.className = 'font-display font-bold text-xl text-neonAmber';
+            gateEl.textContent = 'CORE GATE: PASS';
+            gateEl.className = 'px-3 py-1 rounded-lg bg-neonAmber/15 border border-neonAmber/40 font-mono text-xs text-neonAmber';
+          }
+        };
+
+        setTimeout(() => {
+          document.getElementById('sliderComm').addEventListener('input', updateEval);
+          document.getElementById('sliderTrust').addEventListener('input', updateEval);
+          document.getElementById('sliderGoals').addEventListener('input', updateEval);
+        }, 0);
+      }
+
+      if (type === 'rle') {
+        tagEl.textContent = 'PYTHON // RLE PLAYGROUND';
+        headingEl.textContent = 'Run-Length Encoding Compressor';
+        contentEl.innerHTML = `
+          <p class="text-slate-300">Type any text with repeating characters to watch the RLE algorithm compress and verify lossless restoration:</p>
+          <div class="bg-void/90 border border-white/10 rounded-2xl p-5 space-y-4">
+            <div>
+              <label class="block text-xs font-mono text-slate-400 mb-1.5">RAW PAYLOAD INPUT</label>
+              <input id="rlePlaygroundInput" type="text" value="WWWWWWWWWWWWBWWWWWWWWWWWWBBBWWWWWWWWWWWWWWWWWWWWWWWWB" class="w-full bg-surfaceLight border border-white/15 focus:border-cyberCyan rounded-xl px-3.5 py-2.5 font-mono text-sm text-white focus:outline-none" />
+            </div>
+            <div class="grid sm:grid-cols-2 gap-3">
+              <div class="bg-surface border border-white/10 rounded-xl p-3.5">
+                <span class="text-[11px] font-mono text-cyberCyan block mb-1">COMPRESSED STREAM</span>
+                <p id="rleOutEncoded" class="font-mono font-bold text-sm text-white break-all"></p>
+              </div>
+              <div class="bg-surface border border-white/10 rounded-xl p-3.5">
+                <span class="text-[11px] font-mono text-neonPurple block mb-1">DECODED VERIFICATION</span>
+                <p id="rleOutDecoded" class="font-mono text-xs text-slate-300 break-all"></p>
+              </div>
+            </div>
+            <div class="flex items-center justify-between text-xs font-mono pt-1">
+              <span id="rleStats" class="text-neonLime"></span>
+              <span class="text-slate-400">LOSSLESS: 100%</span>
+            </div>
+          </div>
+        `;
+
+        const runRle = (raw) => {
+          if (!raw) {
+            document.getElementById('rleOutEncoded').textContent = '—';
+            document.getElementById('rleOutDecoded').textContent = '—';
+            document.getElementById('rleStats').textContent = '0 chars';
+            return;
+          }
+          let enc = '';
+          let count = 1;
+          for (let i = 1; i <= raw.length; i++) {
+            if (raw[i] === raw[i - 1]) {
+              count++;
+            } else {
+              enc += `${count}${raw[i - 1]}`;
+              count = 1;
+            }
+          }
+          const saved = Math.round(((raw.length - enc.length) / raw.length) * 100);
+          document.getElementById('rleOutEncoded').textContent = enc;
+          document.getElementById('rleOutDecoded').textContent = raw;
+          document.getElementById('rleStats').textContent = `${raw.length}B → ${enc.length}B (${saved >= 0 ? saved + '% saved' : 'expanded'})`;
+        };
+
+        setTimeout(() => {
+          const inp = document.getElementById('rlePlaygroundInput');
+          runRle(inp.value);
+          inp.addEventListener('input', () => runRle(inp.value));
+        }, 0);
+      }
+
+      if (type === 'toolkit') {
+        tagEl.textContent = 'PYTHON // VISUAL ARRAY SIMULATOR';
+        headingEl.textContent = 'Max Subarray & Manual Sorting';
+        contentEl.innerHTML = `
+          <p class="text-slate-300">Step through <strong>Kadane's Max-Subarray Scan</strong> or trigger a <strong>Manual Bubble Sort Pass</strong> on the live array below:</p>
+          <div class="bg-void/90 border border-white/10 rounded-2xl p-5 space-y-4">
+            <div id="arrayCells" class="flex flex-wrap gap-2 justify-center py-2"></div>
+            <div class="bg-surface border border-white/10 rounded-xl p-3.5 text-center font-mono text-xs text-cyberCyan" id="algoStatus">
+              Ready — click an operation below to step through the array.
+            </div>
+            <div class="flex flex-wrap gap-2.5 justify-center">
+              <button id="btnKadane" class="px-4 py-2 rounded-xl bg-neonPurple text-white font-bold text-xs cursor-pointer">Find Max Subarray (O(n))</button>
+              <button id="btnSortStep" class="px-4 py-2 rounded-xl bg-neonAmber text-void font-bold text-xs cursor-pointer">Run Manual Sort Pass</button>
+              <button id="btnRandomArr" class="px-4 py-2 rounded-xl bg-white/10 text-white font-semibold text-xs cursor-pointer">Shuffle Array</button>
+            </div>
+          </div>
+        `;
+
+        let arr = [-2, 4, -1, 6, -3, 5, -4, 3];
+        let highlightRange = [-1, -1];
+
+        const renderCells = () => {
+          const container = document.getElementById('arrayCells');
+          container.innerHTML = arr.map((num, idx) => {
+            const active = idx >= highlightRange[0] && idx <= highlightRange[1];
+            return `<div class="w-11 h-12 rounded-xl flex items-center justify-center font-mono font-bold text-sm border transition-all ${
+              active
+                ? 'bg-neonPurple/30 border-cyberCyan text-white scale-105 shadow-lg shadow-neonPurple/30'
+                : 'bg-surfaceLight border-white/10 text-slate-300'
+            }">${num}</div>`;
+          }).join('');
+        };
+
+        setTimeout(() => {
+          renderCells();
+          document.getElementById('btnKadane').addEventListener('click', () => {
+            let maxSum = arr[0], curSum = arr[0];
+            let start = 0, end = 0, tempStart = 0;
+            for (let i = 1; i < arr.length; i++) {
+              if (arr[i] > curSum + arr[i]) {
+                curSum = arr[i];
+                tempStart = i;
+              } else {
+                curSum += arr[i];
+              }
+              if (curSum > maxSum) {
+                maxSum = curSum;
+                start = tempStart;
+                end = i;
+              }
+            }
+            highlightRange = [start, end];
+            renderCells();
+            document.getElementById('algoStatus').textContent = `Max Contiguous Subarray: [${arr.slice(start, end + 1).join(', ')}] → Sum = ${maxSum}`;
+          });
+
+          document.getElementById('btnSortStep').addEventListener('click', () => {
+            highlightRange = [-1, -1];
+            let swaps = 0;
+            for (let i = 0; i < arr.length - 1; i++) {
+              if (arr[i] > arr[i + 1]) {
+                [arr[i], arr[i + 1]] = [arr[i + 1], arr[i]];
+                swaps++;
+              }
+            }
+            renderCells();
+            document.getElementById('algoStatus').textContent = swaps > 0
+              ? `Completed 1 manual adjacent-swap pass (${swaps} swaps).`
+              : `Array is completely sorted in ascending order!`;
+          });
+
+          document.getElementById('btnRandomArr').addEventListener('click', () => {
+            arr = Array.from({ length: 8 }, () => Math.floor(Math.random() * 15) - 5);
+            highlightRange = [-1, -1];
+            renderCells();
+            document.getElementById('algoStatus').textContent = 'Generated new random integer array.';
+          });
+        }, 0);
+      }
+
+      if (type === 'velocity') {
+        tagEl.textContent = 'CAPCUT PRO // BEAT-PULSE & SPEED GRAPH';
+        headingEl.textContent = 'Velocity & Beat-Sync Visualizer';
+        contentEl.innerHTML = `
+          <p class="text-slate-300">Simulated 145 BPM beat transient monitor paired with a velocity speed-ramp curve (3.8x rush → 0.35x optical-flow slow-mo):</p>
+          <div class="bg-void/90 border border-white/10 rounded-2xl p-5 space-y-4">
+            <div class="flex items-center justify-between text-xs font-mono">
+              <span class="text-vibrantCoral font-bold">● BEAT PULSE MONITOR</span>
+              <span id="speedReadout" class="text-cyberCyan font-bold">SPEED: 1.00x</span>
+            </div>
+            <div id="beatPulseBox" class="h-24 rounded-2xl bg-gradient-to-r from-neonPurple/20 via-vibrantCoral/20 to-neonAmber/20 border border-white/10 flex items-center justify-center transition-transform duration-100">
+              <span class="font-display font-bold text-2xl tracking-widest text-white">IMPACT FRAME</span>
+            </div>
+            <svg viewBox="0 0 320 90" class="w-full h-24 bg-surface rounded-xl border border-white/10 p-2">
+              <line x1="0" y1="45" x2="320" y2="45" stroke="rgba(255,255,255,0.1)" stroke-dasharray="4 4" />
+              <path d="M 10 75 Q 55 75, 80 15 T 150 75 T 230 15 T 310 70" fill="none" stroke="url(#velGrad)" stroke-width="3.5" stroke-linecap="round" />
+              <defs>
+                <linearGradient id="velGrad" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="#A855F7" />
+                  <stop offset="50%" stop-color="#FF5E62" />
+                  <stop offset="100%" stop-color="#06B6D4" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+        `;
+
+        setTimeout(() => {
+          const speeds = ['3.80x (RUSH)', '0.35x (SLOW-MO)', '2.90x (SNAP)', '0.40x (FLOAT)'];
+          let idx = 0;
+          activeModalInterval = setInterval(() => {
+            const box = document.getElementById('beatPulseBox');
+            const readout = document.getElementById('speedReadout');
+            if (!box || !readout) return;
+            box.style.transform = 'scale(1.04)';
+            box.style.borderColor = '#FF5E62';
+            readout.textContent = `SPEED: ${speeds[idx % speeds.length]}`;
+            idx++;
+            setTimeout(() => {
+              if (box) {
+                box.style.transform = 'scale(1)';
+                box.style.borderColor = 'rgba(255,255,255,0.1)';
+              }
+            }, 140);
+          }, 620);
+        }, 0);
+      }
+
+      if (type === 'timeremap') {
+        tagEl.textContent = 'VN EDITOR & CAPCUT PRO';
+        headingEl.textContent = 'Reverse & Time-Remap Breakdown';
+        contentEl.innerHTML = `
+          <p class="text-slate-300">How forward-to-reverse transitions are structured to eliminate harsh frame jumps:</p>
+          <div class="grid sm:grid-cols-3 gap-3 text-xs font-mono">
+            <div class="bg-void border border-white/10 rounded-2xl p-4">
+              <span class="text-cyberCyan font-bold block mb-1">01. EASE-IN</span>
+              <p class="text-slate-300">Ramp velocity from 1.0x up to 3.2x right before the directional apex.</p>
+            </div>
+            <div class="bg-void border border-white/10 rounded-2xl p-4">
+              <span class="text-vibrantCoral font-bold block mb-1">02. APEX SPLIT</span>
+              <p class="text-slate-300">Duplicate 18 frames, reverse clip, and match tangent slope.</p>
+            </div>
+            <div class="bg-void border border-white/10 rounded-2xl p-4">
+              <span class="text-neonAmber font-bold block mb-1">03. OPTICAL FLOW</span>
+              <p class="text-slate-300">Sub-frame interpolation keeps 60fps motion silky at 0.3x speed.</p>
+            </div>
+          </div>
+        `;
+      }
+
+      if (type === 'zoomcurve') {
+        tagEl.textContent = 'ALIGHT MOTION // GRAPH EDITOR';
+        headingEl.textContent = 'Dynamic Zoom Curve Preview';
+        contentEl.innerHTML = `
+          <p class="text-slate-300">Click <strong>Trigger Zoom Punch</strong> to preview an Expo-Out scale keyframe curve with damped overshoot:</p>
+          <div class="bg-void/90 border border-white/10 rounded-2xl p-5 space-y-4 text-center">
+            <div class="h-36 rounded-2xl bg-surface border border-white/10 overflow-hidden flex items-center justify-center relative">
+              <div id="zoomPreviewTarget" class="px-6 py-3 rounded-2xl bg-gradient-to-r from-neonPurple via-cyberCyan to-vibrantCoral font-display font-bold text-lg text-white transition-transform duration-500 ease-out">
+                KEYFRAME SUBJECT [100%]
+              </div>
+            </div>
+            <button id="triggerZoomBtn" class="px-5 py-2.5 rounded-xl bg-neonPurple hover:bg-neonPurple/90 text-white font-bold text-xs cursor-pointer">
+              Trigger Zoom Punch (100% → 145% → 108%)
+            </button>
+          </div>
+        `;
+
+        setTimeout(() => {
+          document.getElementById('triggerZoomBtn').addEventListener('click', () => {
+            const target = document.getElementById('zoomPreviewTarget');
+            target.style.transform = 'scale(1.45) rotate(-2deg)';
+            target.textContent = 'KEYFRAME SUBJECT [145%]';
+            setTimeout(() => {
+              target.style.transform = 'scale(1.08) rotate(0deg)';
+              target.textContent = 'KEYFRAME SUBJECT [108%]';
+            }, 260);
+          });
+        }, 0);
+      }
+
+      const modal = document.getElementById('interactiveModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    window.addEventListener('load', () => {
+      resizeCanvas();
+      drawBackground();
+      tickTyping();
+      syncProfileUI();
+      document.getElementById('yearNow').textContent = new Date().getFullYear();
+    });
+  </script>
+</body>
+</html>
