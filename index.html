@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Jaisy — available for code builds and high-energy edits. Explore Python projects, interactive demos and creative work." />
   <meta name="theme-color" content="#070910" />
-  <title>Jaisy — Python Developer & Video Editor</title>
+  <title>Jaisy — Software Developer & Video Editor</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -464,7 +464,7 @@
         </div>
         <div class="lg:col-span-7 space-y-6 reveal">
           <p class="text-slate-300 text-base sm:text-lg leading-relaxed">
-            I’m Jaisy — a Python developer and video editor interested in turning ideas into useful, well-crafted experiences. On the development side, I enjoy building logic-driven tools, exploring algorithms and making small applications from the ground up.
+            I’m Jaisy — a Software developer and video editor interested in turning ideas into useful, well-crafted experiences. On the development side, I enjoy building logic-driven tools, exploring algorithms and making small applications from the ground up.
           </p>
           <p class="text-slate-400 text-sm sm:text-base leading-relaxed">
             On the creative side, I work with timing, motion, speed graphs and visual rhythm to make edits feel intentional. I like combining technical thinking with creative execution, and I’m always looking for a better way to build, test and refine my work.
@@ -855,6 +855,12 @@
         </div>
       </div>
     </section>
+    <button id="backToTopBtn" onclick="window.scrollTo({ top: 0, behavior: 'smooth' })" aria-label="Back to top"
+  class="fixed bottom-6 right-6 z-50 w-12 h-12 rounded-full bg-surfaceLight/90 backdrop-blur-md border border-white/15 text-cyberCyan shadow-[0_0_20px_rgba(6,182,212,0.3)] flex items-center justify-center opacity-0 pointer-events-none translate-y-4 transition-all duration-300 hover:scale-110 hover:border-cyberCyan cursor-pointer">
+  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M18 15l-6-6-6 6"/>
+  </svg>
+</button>
 
     <footer id="contact" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16">
       <div class="grid lg:grid-cols-12 gap-6">
@@ -917,7 +923,6 @@
 
       <div class="mt-8 flex flex-col sm:flex-row items-center justify-between text-xs font-mono text-slate-500 gap-2">
         <p>© <span id="yearNow"></span> <span data-bind="footerName">Jaisy</span> — Built with curiosity and care.</p>
-        <a href="#top" class="hover:text-cyberCyan transition-colors">Back to top ↑</a>
       </div>
     </footer>
   </main>
@@ -1038,7 +1043,7 @@
     });
     window.addEventListener('resize', resizeCanvas);
 
-    const roles = ['Python Developer', 'Video Editor', 'Problem Solver'];
+    const roles = ['Software Developer', 'Video Editor', 'Problem Solver'];
     let roleIndex = 0;
     let charIndex = 0;
     let isDeleting = false;
@@ -1585,6 +1590,19 @@
       document.getElementById('yearNow').textContent = '2025';
       updateScrollProgress();
     });
+    const backToTopBtn = document.getElementById('backToTopBtn');
+
+if (backToTopBtn) {
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 300) {
+      backToTopBtn.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-4');
+      backToTopBtn.classList.add('opacity-100', 'translate-y-0');
+    } else {
+      backToTopBtn.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4');
+      backToTopBtn.classList.remove('opacity-100', 'translate-y-0');
+    }
+  });
+}
   </script>
 </body>
 </html>
