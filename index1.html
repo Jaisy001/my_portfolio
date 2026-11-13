@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MatchEvaluator - Step-by-Step Vibe Checker</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            void: '#040408',
+            cardBg: '#0D0E15',
+            inputBg: '#13141F',
+            cyberCyan: '#00F0FF',
+            neonPurple: '#BF55EC',
+          },
+          boxShadow: {
+            'glow-cyan': '0 0 25px rgba(0, 240, 255, 0.25)',
+            'glow-purple': '0 0 25px rgba(191, 85, 236, 0.25)',
+          }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #040408; color: #F8FAFC; }
+    h1, h2, h3, .font-display { font-family: 'Space Grotesk', sans-serif; }
+    .glass-card { background: rgba(13, 14, 21, 0.85); backdrop-filter: blur(16px); }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-between p-4 sm:p-6 selection:bg-cyberCyan selection:text-void">
+
+  <!-- Top Navigation Bar -->
+  <header class="w-full max-w-5xl flex flex-col sm:flex-row justify-between items-center py-4 mb-6 gap-4 border-b border-white/10">
+    <!-- Logo & Subtitle -->
+    <div class="flex items-center gap-3">
+      <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-cyberCyan to-neonPurple flex items-center justify-center shadow-glow-cyan text-void text-2xl font-bold">
+        ⚡
+      </div>
+      <div>
+        <h1 class="font-display font-bold text-lg tracking-tight text-white flex items-center gap-1.5">
+          Match<span class="text-cyberCyan">Evaluator</span>
+        </h1>
+        <p class="text-xs text-slate-400 font-mono">Step-by-Step Vibe Checker</p>
+      </div>
+    </div>
+
+    <!-- Nav Actions -->
+    <nav class="flex items-center gap-2 bg-cardBg/90 p-1.5 rounded-2xl border border-white/15 shadow-xl">
+      <button onclick="switchView('take')" id="navTake" class="px-4 py-2 rounded-xl text-xs font-semibold bg-gradient-to-r from-cyberCyan to-neonPurple text-void shadow-glow-cyan transition-all cursor-pointer flex items-center gap-2">
+        <span>📋</span> Take Test
+      </button>
+      <button onclick="switchView('create')" id="navCreate" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all cursor-pointer flex items-center gap-2">
+        <span>➕</span> Create Profile
+      </button>
+      <button onclick="switchView('results')" id="navResults" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all cursor-pointer flex items-center gap-2">
+        <span>📊</span> Results
+      </button>
+    </nav>
+  </header>
+
+  <!-- Main Container Card -->
+  <main class="w-full max-w-4xl glass-card border border-white/15 rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden my-auto">
+    
+    <!-- ================= VIEW 1: TAKE TEST ================= -->
+    <div id="viewTake" class="space-y-6">
+      
+      <!-- Step 1A: Target & Candidate Setup -->
+      <div id="takeSetup" class="space-y-6 max-w-lg mx-auto text-center py-4">
+        <div class="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-tr from-cyberCyan/10 to-neonPurple/10 border border-cyberCyan/30 flex items-center justify-center text-cyberCyan text-2xl shadow-glow-cyan mb-2">
+          🎯
+        </div>
+        <div>
+          <h2 class="text-2xl font-display font-bold text-white mb-1">Start Evaluation</h2>
+          <p class="text-xs text-slate-400">Enter the profile owner's name whose question set you want to take.</p>
+        </div>
+
+        <div class="space-y-4 text-left">
+          <div>
+            <label class="block text-xs font-mono tracking-wider text-slate-300 uppercase mb-2">Profile Owner Name</label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-cyberCyan">🔍</span>
+              <input type="text" id="evalTarget" placeholder="e.g. Jaisy, obaf oluw sam" class="w-full bg-inputBg border border-white/15 rounded-xl pl-10 pr-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyberCyan focus:shadow-glow-cyan transition-all">
+            </div>
+            <p class="text-[11px] text-slate-400 mt-1.5 font-mono">Pre-loaded profiles: <span class="text-cyberCyan font-semibold">Jaisy</span>, <span class="text-cyberCyan font-semibold">obaf oluw sam</span></p>
+          </div>
+
+          <div>
+            <label class="block text-xs font-mono tracking-wider text-slate-300 uppercase mb-2">Candidate Name (You / Answering Person)</label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neonPurple">👤</span>
+              <input type="text" id="evalCandidate" placeholder="Enter candidate's full name" class="w-full bg-inputBg border border-white/15 rounded-xl pl-10 pr-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-neonPurple focus:shadow-glow-purple transition-all">
+            </div>
+          </div>
+        </div>
+
+        <button onclick="beginQuestions()" class="w-full py-3.5 rounded-xl font-bold text-sm text-void bg-gradient-to-r from-cyberCyan to-neonPurple shadow-glow-cyan hover:opacity-95 transition-all cursor-pointer">
+          Begin Questions →
+        </button>
+      </div>
+
+      <!-- Step 1B: Answering Questions Form (Hidden initially) -->
+      <div id="takeQuestionsForm" class="space-y-6 hidden">
+        <div class="flex justify-between items-center bg-inputBg px-4 py-3 rounded-xl border border-white/10">
+          <span class="text-xs font-mono text-slate-300" id="evalGreeting">Evaluating...</span>
+          <span class="text-xs font-mono text-cyberCyan bg-cyberCyan/10 px-2.5 py-1 rounded-lg border border-cyberCyan/20">Hybrid Scoring</span>
+        </div>
+
+        <div id="questionsListContainer" class="space-y-4 max-h-[55vh] overflow-y-auto pr-2">
+          <!-- Populated via JS -->
+        </div>
+
+        <button onclick="submitTest()" class="w-full py-3.5 rounded-xl font-bold text-sm text-void bg-gradient-to-r from-cyberCyan to-neonPurple shadow-glow-cyan hover:opacity-95 transition-all cursor-pointer">
+          Calculate Compatibility Score 📊
+        </button>
+      </div>
+
+      <!-- Step 1C: Password & Result Screen (Hidden initially) -->
+      <div id="takeResultScreen" class="space-y-6 max-w-md mx-auto text-center py-6 hidden">
+        <div id="passcodeLock" class="space-y-4">
+          <div class="w-16 h-16 mx-auto rounded-full bg-neonPurple/10 border border-neonPurple/30 flex items-center justify-center text-neonPurple text-2xl shadow-glow-purple">🔒</div>
+          <h3 class="font-display font-bold text-xl text-white">Evaluation Complete</h3>
+          <p class="text-xs text-slate-400">Enter security code to decrypt final score and verdict records.</p>
+          
+          <div class="space-y-3 pt-2">
+            <input type="password" id="scorePassword" placeholder="Enter security pass" class="w-full bg-inputBg border border-white/15 rounded-xl px-4 py-3 text-center text-sm text-white tracking-widest focus:outline-none focus:border-neonPurple focus:shadow-glow-purple">
+            <button onclick="verifyTestPassword()" class="w-full py-3 rounded-xl font-semibold text-xs bg-white/10 hover:bg-white/20 text-white border border-white/15 transition-all cursor-pointer">
+              Unlock Results
+            </button>
+            <p id="passwordErrorMsg" class="text-xs text-rose-400 hidden font-mono"></p>
+          </div>
+        </div>
+
+        <div id="unlockedScoreView" class="space-y-4 hidden">
+          <div class="w-16 h-16 mx-auto rounded-full bg-cyberCyan/10 border border-cyberCyan/30 flex items-center justify-center text-cyberCyan text-2xl shadow-glow-cyan">✨</div>
+          <h2 class="text-3xl font-display font-bold text-white" id="displayFinalScore">Score: 0/100</h2>
+          <div class="inline-block px-4 py-1.5 rounded-full text-xs font-mono font-semibold bg-cyberCyan/20 text-cyberCyan border border-cyberCyan/30 shadow-glow-cyan" id="displayVerdict">
+            Safe to Proceed
+          </div>
+          <p class="text-xs text-slate-400 pt-2">Your evaluation results have been securely recorded to profile history.</p>
+          <div class="pt-4">
+            <button onclick="resetTakeTest()" class="px-6 py-2.5 rounded-xl text-xs font-mono font-semibold bg-white/10 hover:bg-white/20 text-slate-200 border border-white/15 transition-all cursor-pointer">
+              Take Another Test
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ================= VIEW 2: CREATE PROFILE ================= -->
+    <div id="viewCreate" class="space-y-6 hidden max-w-lg mx-auto py-2">
+      <div class="text-center">
+        <div class="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-tr from-cyberCyan/10 to-neonPurple/10 border border-neonPurple/30 flex items-center justify-center text-neonPurple text-2xl shadow-glow-purple mb-2">➕</div>
+        <h2 class="text-2xl font-display font-bold text-white mb-1">Create User Profile</h2>
+        <p class="text-xs text-slate-400">Set up custom questions, types, and weights for your profile.</p>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-mono tracking-wider text-slate-300 uppercase mb-2">Profile Owner Name</label>
+          <input type="text" id="newOwnerName" placeholder="e.g., Jaisy" class="w-full bg-inputBg border border-white/15 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyberCyan focus:shadow-glow-cyan transition-all">
+        </div>
+
+        <div>
+          <label class="block text-xs font-mono tracking-wider text-slate-300 uppercase mb-2">Number of Questions</label>
+          <input type="number" id="newNumQuestions" min="1" value="3" class="w-full bg-inputBg border border-white/15 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyberCyan focus:shadow-glow-cyan transition-all">
+        </div>
+
+        <button onclick="startQuestionBuilderSetup()" class="w-full py-3.5 rounded-xl font-bold text-sm text-void bg-gradient-to-r from-cyberCyan to-neonPurple shadow-glow-cyan hover:opacity-95 transition-all cursor-pointer">
+          Configure Questions Setup →
+        </button>
+      </div>
+
+      <!-- Dynamic Question Builder Container -->
+      <div id="questionBuilderForm" class="space-y-4 hidden pt-2">
+        <div id="builderInputsContainer" class="space-y-4 max-h-[45vh] overflow-y-auto pr-1"></div>
+        <button onclick="saveNewProfileToStorage()" class="w-full py-3.5 rounded-xl font-bold text-sm text-void bg-gradient-to-r from-cyberCyan to-neonPurple shadow-glow-cyan hover:opacity-95 transition-all cursor-pointer">
+          Save Profile &amp; Questions 💾
+        </button>
+      </div>
+    </div>
+
+    <!-- ================= VIEW 3: RESULTS ================= -->
+    <div id="viewResults" class="space-y-6 hidden max-w-lg mx-auto py-2 text-center">
+      <div class="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-tr from-cyberCyan/10 to-neonPurple/10 border border-cyberCyan/30 flex items-center justify-center text-cyberCyan text-2xl shadow-glow-cyan mb-2">📊</div>
+      <h2 class="text-2xl font-display font-bold text-white mb-1">View Saved Evaluations</h2>
+      <p class="text-xs text-slate-400">Check candidate scores and verdicts recorded under profile owners.</p>
+
+      <div class="space-y-4 text-left pt-2">
+        <div>
+          <label class="block text-xs font-mono tracking-wider text-slate-300 uppercase mb-2">Profile Owner Name</label>
+          <input type="text" id="resultsOwnerInput" placeholder="e.g. Jaisy" class="w-full bg-inputBg border border-white/15 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyberCyan focus:shadow-glow-cyan transition-all">
+        </div>
+        <button onclick="fetchEvaluations()" class="w-full py-3.5 rounded-xl font-bold text-sm text-void bg-gradient-to-r from-cyberCyan to-neonPurple shadow-glow-cyan hover:opacity-95 transition-all cursor-pointer">
+          View Results List 📋
+        </button>
+      </div>
+
+      <div id="resultsOutputContainer" class="space-y-3 text-left pt-4 max-h-[45vh] overflow-y-auto">
+        <!-- Results rendered here -->
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="mt-8 text-xs text-slate-500 font-mono text-center">
+    MatchEvaluator • Powered by Hybrid Scoring &amp; Local Persistence
+  </footer>
+
+  <!-- Application Logic Script -->
+  <script>
+    let appData = {
+      profiles: {
+        "jaisy": {
+          display_name: "Jaisy",
+          questions: [
+            { question: "Will you comfort me and keep trying even if I try to push away or skip it?", type: "bool", expected_answer: "y", weight: 10 },
+            { question: "Will you prioritize apologizing first before we look for a solution during a disagreement?", type: "bool", expected_answer: "y", weight: 10 },
+            { question: "Do you demand constant downtime or long breaks away from our relationship?", type: "bool", expected_answer: "n", weight: 10 },
+            { question: "Will you maintain at least 75% transparency with me?", type: "bool", expected_answer: "y", weight: 10 },
+            { question: "Will you make an effort to get along well with my Mum?", type: "bool", expected_answer: "y", weight: 10 },
+            { question: "Do you usually leave all the date planning and reaching out for me to handle alone?", type: "bool", expected_answer: "n", weight: 10 },
+            { question: "Do you tend to spend money impulsively or heavily without planning?", type: "bool", expected_answer: "n", weight: 10 },
+            { question: "Will you take constructive feedback well and actively work on self-improvement?", type: "bool", expected_answer: "y", weight: 10 },
+            { question: "Will you reserve your extra warmth, affection, and niceness strictly for me?", type: "bool", expected_answer: "y", weight: 10 },
+            { question: "Rate your mutual trust and honesty level from 1 to 5", type: "scale", max_val: 5, expected_answer: 5, weight: 10 }
+          ]
+        },
+        "obaf oluw sam": {
+          display_name: "obaf Oluw saM",
+          questions: [
+            { question: "Can you cook?", type: "bool", expected_answer: "y", weight: 10 },
+            { question: "Do you apologize first?", type: "bool", expected_answer: "y", weight: 10 },
+            { question: "Do you drink?", type: "bool", expected_answer: "n", weight: 10 }
+          ]
+        }
+      },
+      evaluations: {
+        "jaisy": [
+          { candidate: "Sams", score: 85, verdict: "Safe to Proceed", responses: {} }
+        ]
+      }
+    };
+
+    if (localStorage.getItem("match_evaluator_data")) {
+      try {
+        appData = JSON.parse(localStorage.getItem("match_evaluator_data"));
+      } catch (e) {
+        console.error("Error loading local storage data");
+      }
+    }
+
+    function persistData() {
+      localStorage.setItem("match_evaluator_data", JSON.stringify(appData));
+    }
+
+    function switchView(viewName) {
+      document.getElementById('viewTake').classList.add('hidden');
+      document.getElementById('viewCreate').classList.add('hidden');
+      document.getElementById('viewResults').classList.add('hidden');
+
+      const activeNavStyle = "px-4 py-2 rounded-xl text-xs font-semibold bg-gradient-to-r from-cyberCyan to-neonPurple text-void shadow-glow-cyan transition-all cursor-pointer flex items-center gap-2";
+      const inactiveNavStyle = "px-4 py-2 rounded-xl text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all cursor-pointer flex items-center gap-2";
+
+      document.getElementById('navTake').className = inactiveNavStyle;
+      document.getElementById('navCreate').className = inactiveNavStyle;
+      document.getElementById('navResults').className = inactiveNavStyle;
+
+      if (viewName === 'take') {
+        document.getElementById('viewTake').classList.remove('hidden');
+        document.getElementById('navTake').className = activeNavStyle;
+      } else if (viewName === 'create') {
+        document.getElementById('viewCreate').classList.remove('hidden');
+        document.getElementById('navCreate').className = activeNavStyle;
+      } else if (viewName === 'results') {
+        document.getElementById('viewResults').classList.remove('hidden');
+        document.getElementById('navResults').className = activeNavStyle;
+      }
+    }
+
+    let activeProfileKey = "";
+    let activeCandidateName = "";
+    let computedScore = 0;
+    let computedVerdict = "";
+    let activeQuestionsList = [];
+    let passwordAttemptsLeft = 3;
+
+    function beginQuestions() {
+      const target = document.getElementById('evalTarget').value.trim().toLowerCase();
+      const candidate = document.getElementById('evalCandidate').value.trim();
+
+      if (!target || !appData.profiles[target]) {
+        alert("Profile owner not found. Please enter a valid profile name (e.g. jaisy).");
+        return;
+      }
+      if (!candidate) {
+        alert("Please enter candidate name.");
+        return;
+      }
+
+      activeProfileKey = target;
+      activeCandidateName = candidate;
+      const profile = appData.profiles[target];
+      activeQuestionsList = profile.questions;
+
+      document.getElementById('evalGreeting').textContent = `Evaluating ${candidate} (Owner: ${profile.display_name})`;
+      
+      const container = document.getElementById('questionsListContainer');
+      container.innerHTML = '';
+
+      activeQuestionsList.forEach((q, idx) => {
+        let inputField = '';
+        if (q.type === 'bool') {
+          inputField = `
+            <select data-idx="${idx}" class="test-input w-full bg-inputBg border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-cyberCyan focus:shadow-glow-cyan">
+              <option value="">Select Yes / No...</option>
+              <option value="y">Yes</option>
+              <option value="n">No</option>
+            </select>
+          `;
+        } else {
+          inputField = `
+            <select data-idx="${idx}" class="test-input w-full bg-inputBg border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-cyberCyan focus:shadow-glow-cyan">
+              <option value="">Select rating (1-5)...</option>
+              <option value="1">1 - Lowest</option>
+              <option value="2">2</option>
+              <option value="3">3 - Moderate</option>
+              <option value="4">4</option>
+              <option value="5">5 - Highest / Ideal</option>
+            </select>
+          `;
+        }
+
+        const div = document.createElement('div');
+        div.className = 'bg-inputBg/40 border border-white/10 rounded-2xl p-4 space-y-2';
+        div.innerHTML = `
+          <label class="block text-sm font-medium text-slate-200">Q${idx + 1}: ${q.question} <span class="text-xs font-mono text-cyberCyan">[Weight: ${q.weight || 10}]</span></label>
+          ${inputField}
+        `;
+        container.appendChild(div);
+      });
+
+      document.getElementById('takeSetup').classList.add('hidden');
+      document.getElementById('takeQuestionsForm').classList.remove('hidden');
+    }
+
+    function getVerdictLabel(score) {
+      if (score <= 40) return "Proceed with Caution";
+      if (score <= 75) return "Safe to Proceed";
+      return "Great Choice";
+    }
+
+    function submitTest() {
+      const inputs = document.querySelectorAll('.test-input');
+      let totalEarned = 0;
+      let totalPossible = 0;
+      let responsesMap = {};
+
+      for (let i = 0; i < inputs.length; i++) {
+        const val = inputs[i].value;
+        if (!val) {
+          alert(`Please answer question #${i + 1} before submitting.`);
+          return;
+        }
+
+        const q = activeQuestionsList[i];
+        const weight = q.weight || 10;
+        totalPossible += weight;
+        responsesMap[q.question] = val;
+
+        if (q.type === 'bool') {
+          if (val === q.expected_answer) {
+            totalEarned += weight;
+          }
+        } else if (q.type === 'scale') {
+          const numVal = parseInt(val);
+          const diff = Math.abs(numVal - q.expected_answer);
+          const maxDiff = (q.max_val || 5) - 1;
+          const ratio = maxDiff > 0 ? Math.max(0, (maxDiff - diff) / maxDiff) : 1.0;
+          totalEarned += weight * ratio;
+        }
+      }
+
+      computedScore = totalPossible > 0 ? Math.round((totalEarned / totalPossible) * 100) : 0;
+      computedVerdict = getVerdictLabel(computedScore);
+
+      if (!appData.evaluations[activeProfileKey]) {
+        appData.evaluations[activeProfileKey] = [];
+      }
+      appData.evaluations[activeProfileKey].push({
+        candidate: activeCandidateName,
+        score: computedScore,
+        verdict: computedVerdict,
+        responses: responsesMap
+      });
+      persistData();
+
+      document.getElementById('displayFinalScore').textContent = `Score: ${computedScore}/100`;
+      document.getElementById('displayVerdict').textContent = computedVerdict;
+
+      document.getElementById('takeQuestionsForm').classList.add('hidden');
+      document.getElementById('takeResultScreen').classList.remove('hidden');
+    }
+
+    function verifyTestPassword() {
+      const pass = document.getElementById('scorePassword').value;
+      const errorEl = document.getElementById('passwordErrorMsg');
+
+      if (pass === "2324") {
+        document.getElementById('passcodeLock').classList.add('hidden');
+        document.getElementById('unlockedScoreView').classList.remove('hidden');
+      } else {
+        passwordAttemptsLeft--;
+        if (passwordAttemptsLeft > 0) {
+          errorEl.textContent = `Invalid code. ${passwordAttemptsLeft} attempt(s) remaining.`;
+          errorEl.classList.remove('hidden');
+        } else {
+          errorEl.textContent = "Maximum attempts reached. Access locked.";
+          document.getElementById('scorePassword').disabled = true;
+        }
+      }
+    }
+
+    function resetTakeTest() {
+      document.getElementById('evalTarget').value = '';
+      document.getElementById('evalCandidate').value = '';
+      document.getElementById('scorePassword').value = '';
+      passwordAttemptsLeft = 3;
+      document.getElementById('passwordErrorMsg').classList.add('hidden');
+      document.getElementById('scorePassword').disabled = false;
+      document.getElementById('unlockedScoreView').classList.add('hidden');
+      document.getElementById('passcodeLock').classList.remove('hidden');
+      document.getElementById('takeResultScreen').classList.add('hidden');
+      document.getElementById('takeSetup').classList.remove('hidden');
+    }
+
+    let tempNumQuestions = 3;
+    function startQuestionBuilderSetup() {
+      const owner = document.getElementById('newOwnerName').value.trim();
+      const numQ = parseInt(document.getElementById('newNumQuestions').value);
+
+      if (!owner) {
+        alert("Please enter profile owner name.");
+        return;
+      }
+      if (!numQ || numQ < 1) {
+        alert("Please enter a valid number of questions greater than 0.");
+        return;
+      }
+
+      tempNumQuestions = numQ;
+      const container = document.getElementById('builderInputsContainer');
+      container.innerHTML = '';
+
+      for (let i = 1; i <= numQ; i++) {
+        const div = document.createElement('div');
+        div.className = 'bg-inputBg/40 border border-white/10 rounded-2xl p-4 space-y-3';
+        div.innerHTML = `
+          <label class="block text-xs font-mono text-slate-300">Question #${i} Text</label>
+          <input type="text" id="builder_q_${i}" placeholder="Enter question..." class="w-full bg-inputBg border border-white/15 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-cyberCyan">
+          
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-[11px] font-mono text-slate-400 mb-1">Type</label>
+              <select id="builder_type_${i}" class="w-full bg-inputBg border border-white/15 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyberCyan">
+                <option value="bool">Yes / No (bool)</option>
+                <option value="scale">1-5 Scale Rating</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-[11px] font-mono text-slate-400 mb-1">Expected (y/n or 1-5)</label>
+              <input type="text" id="builder_exp_${i}" placeholder="y or 5" value="y" class="w-full bg-inputBg border border-white/15 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyberCyan">
+            </div>
+          </div>
+          <div>
+            <label class="block text-[11px] font-mono text-slate-400 mb-1">Weight</label>
+            <input type="number" id="builder_weight_${i}" value="10" class="w-full bg-inputBg border border-white/15 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyberCyan">
+          </div>
+        `;
+        container.appendChild(div);
+      }
+
+      document.getElementById('questionBuilderForm').classList.remove('hidden');
+    }
+
+    function saveNewProfileToStorage() {
+      const owner = document.getElementById('newOwnerName').value.trim();
+      const profileKey = owner.toLowerCase();
+      let questionsArr = [];
+
+      for (let i = 1; i <= tempNumQuestions; i++) {
+        const qText = document.getElementById(`builder_q_${i}`).value.trim();
+        const qType = document.getElementById(`builder_type_${i}`).value;
+        const qExp = document.getElementById(`builder_exp_${i}`).value.trim().toLowerCase();
+        const qWeight = parseInt(document.getElementById(`builder_weight_${i}`).value) || 10;
+
+        if (!qText) {
+          alert(`Question #${i} text cannot be empty.`);
+          return;
+        }
+
+        let formattedExp = qExp;
+        if (qType === 'scale') {
+          formattedExp = parseInt(qExp) || 5;
+        } else {
+          formattedExp = (qExp === 'n' || qExp === 'no') ? 'n' : 'y';
+        }
+
+        questionsArr.push({
+          question: qText,
+          type: qType,
+          max_val: qType === 'scale' ? 5 : undefined,
+          expected_answer: formattedExp,
+          weight: qWeight
+        });
+      }
+
+      appData.profiles[profileKey] = {
+        display_name: owner,
+        questions: questionsArr
+      };
+      persistData();
+
+      alert(`Profile successfully created for ${owner} with ${tempNumQuestions} questions!`);
+      document.getElementById('newOwnerName').value = '';
+      document.getElementById('questionBuilderForm').classList.add('hidden');
+      switchView('take');
+    }
+
+    function fetchEvaluations() {
+      const ownerQuery = document.getElementById('resultsOwnerInput').value.trim().toLowerCase();
+      const container = document.getElementById('resultsOutputContainer');
+      container.innerHTML = '';
+
+      if (!ownerQuery || !appData.evaluations[ownerQuery]) {
+        container.innerHTML = `<p class="text-xs text-slate-400 font-mono text-center py-4">No evaluation records found for '${ownerQuery}'.</p>`;
+        return;
+      }
+
+      const records = appData.evaluations[ownerQuery];
+      const ownerDisplayName = appData.profiles[ownerQuery] ? appData.profiles[ownerQuery].display_name : ownerQuery;
+
+      const headerTitle = document.createElement('h3');
+      headerTitle.className = 'font-display font-bold text-sm text-white mb-2 uppercase font-mono tracking-wider';
+      headerTitle.textContent = `Evaluations for: ${ownerDisplayName}`;
+      container.appendChild(headerTitle);
+
+      records.forEach(rec => {
+        const card = document.createElement('div');
+        card.className = 'bg-inputBg border border-white/10 rounded-2xl p-4 flex justify-between items-center';
+        card.innerHTML = `
+          <div>
+            <h4 class="font-bold text-sm text-white">Candidate: ${rec.candidate}</h4>
+            <p class="text-xs text-slate-400 mt-0.5 font-mono">Verdict: <span class="text-cyberCyan font-semibold">${rec.verdict}</span></p>
+          </div>
+          <div class="text-right">
+            <span class="text-lg font-bold text-white">${rec.score}/100</span>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+  </script>
+</body>
+</html>
